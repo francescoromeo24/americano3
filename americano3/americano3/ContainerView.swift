@@ -8,8 +8,19 @@
 import SwiftUI
 
 struct ContainerView: View {
+    init() {
+            // Customize the Tab Bar appearance
+            UITabBar.appearance().backgroundColor = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 80)
+        }
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        TabView{
+            Tab("Home", systemImage: "house") {
+                ContentView()
+            }
+            Tab("Favourites", systemImage: "star.fill"){
+                FavouritesView()
+            }
+        }
     }
 }
 
