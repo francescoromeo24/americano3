@@ -6,284 +6,302 @@
 //
 
 import SwiftUI
+import Speech
+import AVFoundation
 
 struct ContentView: View {
-    //customization of navigation title
+    
+    // Customization of navigation title
     init() {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.systemBlue]
     }
-   
+    
+    // Variables for translation and recording
     @State private var textInput = ""
     @State private var brailleOutput = ""
     @State private var isTextToBraille = true
+    @State private var flashcards: [Flashcard] = []
+    @State private var showingFavorites = false
+    @State private var isRecording = false
     
-    //translation from text to braille
-    func translateToBraille(text: String) -> String {
-        guard !text.isEmpty else {return " "}
-        var translatedText = ""
-        for char in text.lowercased() {
-            if let brailleChar = brailleDictionary[char] {
-                translatedText += brailleChar
-            } else {
-                translatedText += " "
-            }
-        }
-        return translatedText
-    }
-    
-    //translation from braille to text
-    func translateToText(braille: String) -> String {
-        guard !braille.isEmpty else {return " "}
-        _ = " "
-        let reverseDictionary = brailleDictionary.reduce(into: [String: Character]()) { result, pair in
-            let (key, value) = pair
-            if result[value] == nil {
-                result[value] = key
-            }
-        }
-        let brailleUnits = braille.split(separator: " ")
-        var reversedText = ""
-        for unit in brailleUnits {
-            if let textChar = reverseDictionary[String(unit)] {
-                reversedText += String(textChar)
-            } else {
-                reversedText += "?"
-            }
-        }
-        
-        return reversedText
-    }
+    @StateObject private var speechRecognizer = SpeechRecognizerCoordinator()
     
     var body: some View {
         NavigationStack {
-                ScrollView{
-                    VStack {
-                        //rectangle, text section and buttons
-                        VStack{
-                            ZStack{
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Rectangle, text section, and buttons
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.white)
+                            .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.white)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(Color.blue, lineWidth: 2)
-                                    )
-                                    .frame(width: 370, height: 334)
-                                    
+                                    .stroke(Color.blue, lineWidth: 2)
+                            )
+                            .frame(width: 370, height: 350)
+                        
+                        VStack {
+                            // Text section and text label
+                            HStack {
+                                Text(isTextToBraille ? "Text" : "Braille")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color.black)
+                                Spacer()
+                            }
+                            
+                            // Insert text
+                            TextField("Enter \(isTextToBraille ? "text" : "braille")", text: isTextToBraille ? $textInput : $brailleOutput)
+                                .frame(height: 80)
+                                .background(Color.clear)
+                                .scrollContentBackground(.hidden)
+                                .foregroundColor(.gray)
+                            
+                                .onChange(of: textInput) {
+                                    if isTextToBraille {
+                                        brailleOutput = Translate.translateToBraille(text: textInput)
+                                    } else {
+                                        textInput = Translate.translateToText(braille: brailleOutput)
+                                    }
+                                }
+                                .onSubmit {
+                                    addFlashcard()
+                                }
+                            
+                            Spacer()
+                            
+                            // Line in the middle of the rectangle, switch button
+                            ZStack {
+                                Divider()
+                                    .frame(height: 2)
+                                    .background(Color.blue)
                                 
-                                //text section and text label
-                                VStack(alignment: .leading){
-                                    Text(isTextToBraille ? "Text": "Braille")
-                                        .font(.title)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color.black)
-                                        .padding(.trailing, 230)
-                                    TextField("Enter \(isTextToBraille ? "text" : "braille")", text: isTextToBraille ? $textInput : $brailleOutput)
-                                        .font(.body)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color.gray)
-                                        .padding(.trailing, 245)
-                                        .padding(.bottom, 20)
-                                    
-                                        .onChange(of: isTextToBraille ? textInput : brailleOutput) {
-                                            if isTextToBraille {
-                                                brailleOutput = translateToBraille(text: textInput)
-                                            } else {
-                                                textInput = translateToText(braille: brailleOutput)
-                                            }
-                                        }
-
-                                    
-                                    //line in the middle of the rectangle, switch button
-                                    
-                                    Button(action:{
-                                        isTextToBraille.toggle()
-                                        textInput = " "
-                                        brailleOutput = " "
-                                    }){
-                                        
-                                        ZStack {
-                                            Divider()
-                                                .overlay(.blue)
-                                             Image(systemName: "circle.fill")
+                                Button(action: {
+                                    isTextToBraille.toggle()
+                                    let temp = textInput
+                                    textInput = brailleOutput
+                                    brailleOutput = temp
+                                }) {
+                                    ZStack {
+                                        Image(systemName: "circle.fill")
                                             .foregroundStyle(Color("Background"))
-                                                .font(.system(size: 40))
-                                            Image(systemName: "arrow.trianglehead.swap")
-                                                .font(.system(size: 20))
-                                        }
-                                        .padding(.top, 10)
+                                            .font(.system(size: 40))
+                                        Image(systemName: "arrow.trianglehead.swap")
+                                            .font(.system(size: 20))
                                     }
-                                    
-                                    //braille section, output
-                                    VStack(alignment: .leading){
-                                        Text(isTextToBraille ? "Braille": "Text")
-                                            .font(.title)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(Color.black)
-                                        Text(brailleOutput)
-                                            .font(.body)
-                                           .fontWeight(.semibold)
-                                           .foregroundColor(Color.gray)
-                                           .padding(.bottom, 30.0)
-                                        
-                                            
-                                    }.padding(.trailing, 200)
-                                    
-                                    
-                                    //final part of the rectangle: link to Icloud and microphone
-                                   
-                                    HStack{
-                                        
-                                        ZStack {
-                                            Image(systemName: "circle.fill")
-                                                .foregroundStyle(Color("Background"))
-                                                .font(.system(size: 50))
-                                            Image(systemName: "square.and.arrow.down")
-                                                .font(.system(size: 25))
-                                        }
-                                        
-                                        Spacer()
-                                            .frame(width: 100)
-                                        
-                                        ZStack{
-                                            Image(systemName: "circle.fill")
-                                                .foregroundStyle(Color("Background"))
-                                                .font(.system(size: 50))
-                                            Image(systemName: "microphone")
-                                                .font(.system(size: 25))
-                                        }
-                                        
-                                    }
-                                  
-                                    
                                 }
-                                .padding()
-                                
                             }
-                        }
-                        Spacer()
-                        
-                        
-                        //history section and flashcards
-                        HStack {
-                            Text("History")
-                                .font(.title)
-                                .fontWeight(.bold)
-                                .multilineTextAlignment(.leading)
-                                .foregroundStyle(.blue)
                             Spacer()
-                        }
-                        //flashcards to track history
-                        HStack {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.white)
-                                    .frame(width: 146, height: 164)
-                                VStack{
-                                    Text(textInput)
-                                        .font(.headline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(Color.black)
-                                    
-                                        .padding(.bottom,3)
-                                    
+                            
+                            // Braille section, output
+                            VStack(alignment: .leading) {
+                                Text(isTextToBraille ? "Braille" : "Text")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color.black)
+                                
+                                ScrollView(.vertical, showsIndicators: true) {
                                     Text(brailleOutput)
-                                        .font(.body)
-                                        .fontWeight(.regular)
-                                        .foregroundColor(Color.gray)
-                                    
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.clear)
+                                        .foregroundColor(.gray)
                                 }
-                                Image(systemName: "star")
-                                    .padding(.bottom, 120)
-                                    .padding(.leading, 100)
+                                .frame(height: 40)
+                            }
+                            
+                            // Importer from files
+                            HStack {
+                                Importer()
                                 
-                            }
-                            Spacer()
-                                .frame(width: 30)
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.white)
-                                    .frame(width: 146, height: 164)
-                                VStack{
-                                    Text("Elevator")
-                                        .font(.headline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(Color.black)
-                                    
-                                        .padding(.bottom,3)
-                                    
-                                    Text("⠑⠇⠑⠧⠁⠞⠕⠗")
-                                        .font(.body)
-                                        .fontWeight(.regular)
-                                        .foregroundColor(Color.gray)
-                                    
+                                // Microphone button
+                                Button(action: {
+                                    if isRecording {
+                                        speechRecognizer.stopRecording()
+                                    } else {
+                                        speechRecognizer.startRecording { result in
+                                            textInput = result
+                                            brailleOutput = Translate.translateToBraille(text: result)
+                                            addFlashcard()
+
+                                        }
+                                    }
+                                    isRecording.toggle()
+                                }) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(isRecording ? Color.red : Color.background)
+                                            .frame(width: 50, height: 50)
+                                        Image(systemName: "microphone")
+                                            .foregroundColor(.blue)
+                                            .font(.title)
+                                    }
                                 }
-                                Image(systemName: "star.fill")
-                                    .padding(.bottom, 120)
-                                    .padding(.leading, 100)
                             }
+                            .padding(.top, 5)
                         }
-                        
-                        HStack {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.white)
-                                    .frame(width: 146, height: 164)
-                                VStack{
-                                    Text("Home")
-                                        .font(.headline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(Color.black)
-                                    
-                                        .padding(.bottom,3)
-                                    
-                                    Text("⠓⠕⠍⠑")
-                                        .font(.body)
-                                        .fontWeight(.regular)
-                                        .foregroundColor(Color.gray)
-                                    
-                                }
-                                Image(systemName: "star")
-                                    .padding(.bottom, 120)
-                                    .padding(.leading, 100)
-                            }
-                            Spacer()
-                                .frame(width: 30)
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.white)
-                                    .frame(width: 146, height: 164)
-                                VStack{
-                                    Text("Enterprise")
-                                        .font(.headline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(Color.black)
-                                    
-                                        .padding(.bottom,3)
-                                    
-                                    Text("⠢⠞⠻⠏⠗⠊⠎⠑")
-                                        .font(.body)
-                                        .fontWeight(.regular)
-                                        .foregroundColor(Color.gray)
-                                    
-                                }
-                                Image(systemName: "star")
-                                    .padding(.bottom, 120)
-                                    .padding(.leading, 100)
-                            }
-                        }
-                        
+                        .padding()
                     }
-                    .foregroundStyle(.blue)
-                    .padding()
+                    .padding(.vertical, 10)
+                    
+                    // History section
+                    HStack {
+                        Text("History")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.leading)
+                            .foregroundStyle(.blue)
+                        Spacer()
+                    }
                 }
-                .navigationTitle("Braille Translator")
-                .foregroundColor(.blue)
-                .background(Color("Background"))
+                
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+                                  ForEach(flashcards) { flashcard in
+                                      FlashcardView(flashcard: flashcard)
+                                      { updatedFlashcard in
+                                          // Update the flashcard with the updated one
+                                          if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
+                                              flashcards[index] = updatedFlashcard
+                                          }
+                                          toggleFlashcardStar(for: updatedFlashcard)
+                                      }
+                                      .frame(width: 146, height: 164) // Set the size of each flashcard
+                                  }
+                              }
+                
+                ForEach(flashcards) { flashcard in
+                    FlashcardView(flashcard: flashcard)
+                    { updatedFlashcard in
+                        // Update the flashcard with the updated one
+                        if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
+                            flashcards[index] = updatedFlashcard
+                        }
+                        toggleFlashcardStar(for: updatedFlashcard)
+                    }
+                }
+
+                
+                
+                .foregroundStyle(.blue)
+                .padding()
+            }
+            .navigationTitle("Braille Translator")
+            .foregroundColor(.blue)
+            .background(Color("Background"))
+        }
+    }
+    
+    private func addFlashcard() {
+        // Avoid adding a flashcard if no translation exists
+        guard !textInput.isEmpty else { return }
+        
+        // Create a new flashcard
+        let newFlashcard = Flashcard(word: textInput, translation: brailleOutput)
+        
+        if !flashcards.contains(where: {$0.word == newFlashcard.word}){
+            flashcards.append(newFlashcard) //add flashcard
+        }
+       
+        textInput = ""
+        brailleOutput = ""
+    }
+    
+    private func toggleStar(for flashcard: Flashcard) {
+        if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
+            flashcards[index].isStarred.toggle() // Cambia lo stato di isStarred
+        }
+    }
+    private func toggleFlashcardStar(for flashcard: Flashcard) {
+        // Cerca l'indice della flashcard nell'array
+        if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
+            flashcards[index].isStarred.toggle() // Cambia lo stato di preferito
+        }
+    }
+
+    
+    
+    
+    
+    // Speech Recognizer Coordinator Class
+    final class SpeechRecognizerCoordinator: NSObject, ObservableObject {
+        private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+        private let audioEngine = AVAudioEngine()
+        private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+        private var recognitionTask: SFSpeechRecognitionTask?
+        
+        func startRecording(completion: @escaping (String) -> Void) {
+            guard !audioEngine.isRunning else {
+                print("Audio engine is already running.")
+                return
+            }
+            
+            // Request microphone and speech permissions
+            SFSpeechRecognizer.requestAuthorization { authStatus in
+                DispatchQueue.main.async {
+                    if authStatus == .authorized {
+                        AVAudioApplication.requestRecordPermission { granted in
+                            if granted {
+                                do {
+                                    try self.startAudioEngine(completion: completion)
+                                } catch {
+                                    print("Error starting audio engine: \(error.localizedDescription)")
+                                }
+                            } else {
+                                print("Microphone permission denied.")
+                            }
+                        }
+                    } else {
+                        print("Speech recognition permission denied.")
+                    }
+                }
             }
         }
         
+        func stopRecording() {
+            audioEngine.inputNode.removeTap(onBus: 0) // Remove the tap
+            audioEngine.stop()
+            recognitionRequest?.endAudio()
+            recognitionTask?.cancel()
+            recognitionTask = nil
+        }
+        
+        private func startAudioEngine(completion: @escaping (String) -> Void) throws {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            
+            recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+            guard let recognitionRequest = recognitionRequest else {
+                throw SpeechError.requestInitializationFailed
+            }
+            
+            recognitionRequest.shouldReportPartialResults = true
+            
+            recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { result, error in
+                if let result = result {
+                    DispatchQueue.main.async {
+                        completion(result.bestTranscription.formattedString)
+                    }
+                }
+                if let error = error {
+                    print("Speech recognition error: \(error.localizedDescription)")
+                }
+            }
+            
+            let inputNode = audioEngine.inputNode
+            let recordingFormat = inputNode.inputFormat(forBus: 0)
+            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+                recognitionRequest.append(buffer)
+            }
+            
+            audioEngine.prepare()
+            try audioEngine.start()
+        }
+        
+        enum SpeechError: Error {
+            case requestInitializationFailed
+        }
     }
-
+}
 
 #Preview {
     ContentView()

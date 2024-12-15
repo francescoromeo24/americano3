@@ -17,8 +17,10 @@ struct ContainerView: View {
             Tab("Home", systemImage: "house") {
                 ContentView()
             }
-            Tab("Favourites", systemImage: "star.fill"){
-                FavouritesView()
+            Tab("Favorites", systemImage: "star.fill"){
+                FavouritesView(flashcards: .constant([
+                        Flashcard(word: "", translation: "", isStarred: true),
+                    ]))
             }
         }
     }
