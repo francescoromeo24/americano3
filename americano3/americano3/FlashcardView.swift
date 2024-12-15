@@ -1,18 +1,18 @@
 //
-//  Microphone.swift
+//  FlashcardView.swift
 //  americano3
 //
-//  Created by Francesco Romeo on 14/12/24.
+//  Created by Francesco Romeo on 15/12/24.
 //
 
 import SwiftUI
 
-struct Microphone: View {
+struct FlashcardView: View {
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    Microphone()
+    FlashcardView()
 }
