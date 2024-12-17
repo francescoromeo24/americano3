@@ -23,7 +23,7 @@ struct ContainerView: View {
             }
             Tab("Favorites", systemImage: "star.fill"){
                 FavouritesView(flashcards: .constant([
-                        Flashcard(word: "", translation: "", isStarred: true),
+                    Flashcard(word: "", translation: "", isStarred: true),
                     ]))
                 .accessibilityHint("This is the favourites view")
             }

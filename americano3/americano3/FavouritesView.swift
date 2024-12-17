@@ -42,7 +42,8 @@ struct FavouritesView_Previews: PreviewProvider {
     static var previews: some View {
         FavouritesView(flashcards: .constant([
             Flashcard(word: "", translation: "", isStarred: true),
-            Flashcard(word: "", translation: "", isStarred: false),
+            //Flashcard(word: "", translation: "", isStarred: false),
         ]))
+        .environmentObject(FlashcardManager())
     }
 }
