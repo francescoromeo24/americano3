@@ -84,6 +84,7 @@ struct ContentView: View {
                                 
                                 Button(action: {
                                     isTextToBraille.toggle()
+                                        
                                     let temp = textInput
                                     textInput = brailleOutput
                                     brailleOutput = temp
@@ -95,6 +96,7 @@ struct ContentView: View {
                                             .font(.system(size: 40))
                                         Image(systemName: "arrow.trianglehead.swap")
                                             .font(.system(size: 20))
+                                            .accessibilityHint("This is the switch button")
                                     }
                                 }
                             }
