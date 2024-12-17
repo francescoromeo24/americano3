@@ -4,23 +4,23 @@
 //
 //  Created by Francesco Romeo on 15/12/24.
 //
-
 import SwiftUI
 
 struct FlashcardView: View {
-    var flashcard: Flashcard
+    @Binding var flashcard: Flashcard
     var onToggleStar: (Flashcard) -> Void
+    @State private var navigateToFavourites = false // State for navigation
 
     var body: some View {
         VStack {
             // Flashcard content
             VStack(alignment: .leading) {
-                Text(flashcard.word.isEmpty ? "Word" : flashcard.word)  // Show "Word" if empty
-                    .font(.title)
+                Text(flashcard.word.isEmpty ? "Word" : flashcard.word) // Show "Word" if empty
+                    .font(.headline)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
-                Text(flashcard.translation.isEmpty ? "Translation" : flashcard.translation)  // Show "Translation" if empty
-                    .font(.subheadline)
+                Text(flashcard.translation.isEmpty ? "Translation" : flashcard.translation) // Show "Translation" if empty
+                    .font(.headline)
                     .foregroundColor(.gray)
                     .padding(.top, 2)
             }
@@ -30,28 +30,49 @@ struct FlashcardView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    onToggleStar(flashcard)
-
+                    flashcard.isStarred.toggle() // Toggle the star
+                    onToggleStar(flashcard) // Pass updated flashcard
+                            
                 }) {
                     Image(systemName: flashcard.isStarred ? "star.fill" : "star")
-                        .foregroundColor(flashcard.isStarred ? .blue : .blue)
+                        .foregroundColor(.blue)
                         .font(.title)
                 }
                 .padding()
+                
+                NavigationLink(
+                    destination: FavouritesView(
+                        flashcards: .constant([flashcard]) // Pass single flashcard as example
+                    ),
+                    isActive: $navigateToFavourites,
+                    label: {EmptyView()}
+    )
+                
+                
             }
         }
         .frame(width: 146, height: 164)
-        .background(RoundedRectangle(cornerRadius: 8).fill(Color.white).shadow(radius: 2))
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.white)
+                .shadow(radius: 2)
+        )
         .padding(.horizontal)
+        // NavigationLink to navigate to the FavouritesView
+      
+         
     }
 }
 
-#Preview {
-    FlashcardView(flashcard: Flashcard(word: "", translation: "", isStarred: false)) { updatedFlashcard in
-        // The action to handle the star toggle
-        print("Toggled star for flashcard with word: \(updatedFlashcard.word)")
+struct FlashcardView_Previews: PreviewProvider {
+    static var previews: some View {
+        FlashcardView(
+            flashcard: .constant(Flashcard(word: "", translation: "", isStarred: true)),
+            onToggleStar: { flashcard in
+                print("Toggled star for flashcard with word: \(flashcard.word)")
+            }
+        )
+        .previewLayout(.sizeThatFits)
+        .padding()
     }
 }
-
-
-

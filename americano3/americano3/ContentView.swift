@@ -16,14 +16,14 @@ struct ContentView: View {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.systemBlue]
     }
     
-    // Variables for translation and recording
+    // Variables for translation
     @State private var textInput = ""
     @State private var brailleOutput = ""
     @State private var isTextToBraille = true
-    @State private var flashcards: [Flashcard] = []
-    @State private var showingFavorites = false
+    //variable flashcard
+    @StateObject private var flashcardManager = FlashcardManager()
+    //Variables for recording
     @State private var isRecording = false
-    
     @StateObject private var speechRecognizer = SpeechRecognizerCoordinator()
     
     var body: some View {
@@ -44,6 +44,7 @@ struct ContentView: View {
                             // Text section and text label
                             HStack {
                                 Text(isTextToBraille ? "Text" : "Braille")
+                                    .accessibilityHint("This is the text label")
                                     .font(.title2)
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color.black)
@@ -52,10 +53,12 @@ struct ContentView: View {
                             
                             // Insert text
                             TextField("Enter \(isTextToBraille ? "text" : "braille")", text: isTextToBraille ? $textInput : $brailleOutput)
+                                .accessibilityHint("Insert text here")
                                 .frame(height: 80)
                                 .background(Color.clear)
                                 .scrollContentBackground(.hidden)
                                 .foregroundColor(.gray)
+                                .font(.headline)
                             
                                 .onChange(of: textInput) {
                                     if isTextToBraille {
@@ -64,8 +67,11 @@ struct ContentView: View {
                                         textInput = Translate.translateToText(braille: brailleOutput)
                                     }
                                 }
+                            // add flashcard everytime you insert a text
                                 .onSubmit {
-                                    addFlashcard()
+                                    flashcardManager.addFlashcard(textInput: textInput, brailleOutput: brailleOutput)
+                                   textInput = ""
+                                    brailleOutput = ""
                                 }
                             
                             Spacer()
@@ -81,6 +87,7 @@ struct ContentView: View {
                                     let temp = textInput
                                     textInput = brailleOutput
                                     brailleOutput = temp
+                                      
                                 }) {
                                     ZStack {
                                         Image(systemName: "circle.fill")
@@ -96,12 +103,17 @@ struct ContentView: View {
                             // Braille section, output
                             VStack(alignment: .leading) {
                                 Text(isTextToBraille ? "Braille" : "Text")
+                                    .accessibilityHint("This is the Braille label")
                                     .font(.title2)
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color.black)
                                 
                                 ScrollView(.vertical, showsIndicators: true) {
                                     Text(brailleOutput)
+                                        .accessibilityHint("This is the Braille Output")
+                                        .font(.headline)
+                                        .fontWeight(.medium)
+                                        .multilineTextAlignment(.leading)
                                         .frame(maxWidth: .infinity)
                                         .background(Color.clear)
                                         .foregroundColor(.gray)
@@ -112,30 +124,18 @@ struct ContentView: View {
                             // Importer from files
                             HStack {
                                 Importer()
-                                
+                                    .accessibilityHint("You can import files here")
                                 // Microphone button
-                                Button(action: {
-                                    if isRecording {
-                                        speechRecognizer.stopRecording()
-                                    } else {
-                                        speechRecognizer.startRecording { result in
-                                            textInput = result
-                                            brailleOutput = Translate.translateToBraille(text: result)
-                                            addFlashcard()
-
-                                        }
-                                    }
-                                    isRecording.toggle()
-                                }) {
-                                    ZStack {
-                                        Circle()
-                                            .fill(isRecording ? Color.red : Color.background)
-                                            .frame(width: 50, height: 50)
-                                        Image(systemName: "microphone")
-                                            .foregroundColor(.blue)
-                                            .font(.title)
-                                    }
+                                SpeechRecognizerView()
+                                { result in
+                                    textInput = result
+                                    brailleOutput = Translate.translateToBraille(text: result)
+                                    
+                                    flashcardManager.addFlashcard(textInput: textInput, brailleOutput: brailleOutput)
+                                    
                                 }
+                               
+                                
                             }
                             .padding(.top, 5)
                         }
@@ -146,41 +146,29 @@ struct ContentView: View {
                     // History section
                     HStack {
                         Text("History")
+                            .accessibilityHint("This is the history section")
                             .font(.title)
                             .fontWeight(.bold)
-                            .multilineTextAlignment(.leading)
                             .foregroundStyle(.blue)
+                            .padding(.leading, 20.0)
                         Spacer()
                     }
                 }
                 
+                //Flashcard Grid
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                                  ForEach(flashcards) { flashcard in
-                                      FlashcardView(flashcard: flashcard)
-                                      { updatedFlashcard in
-                                          // Update the flashcard with the updated one
-                                          if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
-                                              flashcards[index] = updatedFlashcard
-                                          }
-                                          toggleFlashcardStar(for: updatedFlashcard)
-                                      }
-                                      .frame(width: 146, height: 164) // Set the size of each flashcard
-                                  }
-                              }
-                
-                ForEach(flashcards) { flashcard in
-                    FlashcardView(flashcard: flashcard)
-                    { updatedFlashcard in
-                        // Update the flashcard with the updated one
-                        if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
-                            flashcards[index] = updatedFlashcard
+                    ForEach($flashcardManager.flashcards) { $flashcard in
+                        FlashcardView(flashcard: $flashcard)
+                        { updatedFlashcard in
+                            
+                            // Update the flashcard with the updated one
+                            if let index = flashcardManager.flashcards.firstIndex(where: { $0.id == flashcard.id }) {
+                                flashcardManager.flashcards[index] = updatedFlashcard
+                            }
                         }
-                        toggleFlashcardStar(for: updatedFlashcard)
+                        .frame(width: 146, height: 164) // Set the size of each flashcard
                     }
                 }
-
-                
-                
                 .foregroundStyle(.blue)
                 .padding()
             }
@@ -190,117 +178,6 @@ struct ContentView: View {
         }
     }
     
-    private func addFlashcard() {
-        // Avoid adding a flashcard if no translation exists
-        guard !textInput.isEmpty else { return }
-        
-        // Create a new flashcard
-        let newFlashcard = Flashcard(word: textInput, translation: brailleOutput)
-        
-        if !flashcards.contains(where: {$0.word == newFlashcard.word}){
-            flashcards.append(newFlashcard) //add flashcard
-        }
-       
-        textInput = ""
-        brailleOutput = ""
-    }
-    
-    private func toggleStar(for flashcard: Flashcard) {
-        if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
-            flashcards[index].isStarred.toggle() // Cambia lo stato di isStarred
-        }
-    }
-    private func toggleFlashcardStar(for flashcard: Flashcard) {
-        // Cerca l'indice della flashcard nell'array
-        if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
-            flashcards[index].isStarred.toggle() // Cambia lo stato di preferito
-        }
-    }
-
-    
-    
-    
-    
-    // Speech Recognizer Coordinator Class
-    final class SpeechRecognizerCoordinator: NSObject, ObservableObject {
-        private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
-        private let audioEngine = AVAudioEngine()
-        private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-        private var recognitionTask: SFSpeechRecognitionTask?
-        
-        func startRecording(completion: @escaping (String) -> Void) {
-            guard !audioEngine.isRunning else {
-                print("Audio engine is already running.")
-                return
-            }
-            
-            // Request microphone and speech permissions
-            SFSpeechRecognizer.requestAuthorization { authStatus in
-                DispatchQueue.main.async {
-                    if authStatus == .authorized {
-                        AVAudioApplication.requestRecordPermission { granted in
-                            if granted {
-                                do {
-                                    try self.startAudioEngine(completion: completion)
-                                } catch {
-                                    print("Error starting audio engine: \(error.localizedDescription)")
-                                }
-                            } else {
-                                print("Microphone permission denied.")
-                            }
-                        }
-                    } else {
-                        print("Speech recognition permission denied.")
-                    }
-                }
-            }
-        }
-        
-        func stopRecording() {
-            audioEngine.inputNode.removeTap(onBus: 0) // Remove the tap
-            audioEngine.stop()
-            recognitionRequest?.endAudio()
-            recognitionTask?.cancel()
-            recognitionTask = nil
-        }
-        
-        private func startAudioEngine(completion: @escaping (String) -> Void) throws {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-            
-            recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-            guard let recognitionRequest = recognitionRequest else {
-                throw SpeechError.requestInitializationFailed
-            }
-            
-            recognitionRequest.shouldReportPartialResults = true
-            
-            recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { result, error in
-                if let result = result {
-                    DispatchQueue.main.async {
-                        completion(result.bestTranscription.formattedString)
-                    }
-                }
-                if let error = error {
-                    print("Speech recognition error: \(error.localizedDescription)")
-                }
-            }
-            
-            let inputNode = audioEngine.inputNode
-            let recordingFormat = inputNode.inputFormat(forBus: 0)
-            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
-                recognitionRequest.append(buffer)
-            }
-            
-            audioEngine.prepare()
-            try audioEngine.start()
-        }
-        
-        enum SpeechError: Error {
-            case requestInitializationFailed
-        }
-    }
 }
 
 #Preview {

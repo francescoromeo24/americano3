@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 class FlashcardManager: ObservableObject {
     @Published var flashcards: [Flashcard] = []
@@ -24,8 +25,11 @@ class FlashcardManager: ObservableObject {
     
     func toggleFlashcardStar(for flashcard: Flashcard) {
         if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
-            flashcards[index].isStarred.toggle() // Toggle starred state
+            flashcards[index].isStarred.toggle()// Toggle starred state
+            
         }
     }
+    var starredFlashcards: [Flashcard]{
+        flashcards.filter {$0.isStarred}
+    }
 }
-
