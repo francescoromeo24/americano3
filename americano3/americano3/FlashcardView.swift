@@ -58,7 +58,7 @@ struct FlashcardView: View {
                  ),
                  isActive: $navigateToFavourites,
                  label: {
-                     FavouritesView(flashcards: .constant([flashcard]))
+                     EmptyView()
                  }
              )
             

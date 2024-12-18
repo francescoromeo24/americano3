@@ -31,7 +31,7 @@ struct FavouritesView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Favourites")
+            .navigationTitle("Favorites")
             .foregroundColor(.blue)
             .background(Color("Background"))
         }
