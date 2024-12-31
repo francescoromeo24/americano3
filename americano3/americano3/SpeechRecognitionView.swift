@@ -34,6 +34,7 @@ struct SpeechRecognizerView: View {
                     .foregroundColor(.blue)
                     .font(.title)
             }
+            
         }
     }
 }

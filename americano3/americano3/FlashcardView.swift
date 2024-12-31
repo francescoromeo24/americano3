@@ -52,7 +52,7 @@ struct FlashcardView: View {
             )
             .padding(.horizontal)
             // NavigationLink to navigate to the FavouritesView
-            NavigationLink(
+            /*NavigationLink(
                  destination: FavouritesView(
                      flashcards: .constant([flashcard]) // Pass single flashcard as example
                  ),
@@ -60,7 +60,7 @@ struct FlashcardView: View {
                  label: {
                      EmptyView()
                  }
-             )
+             )*/
             
         }
     }

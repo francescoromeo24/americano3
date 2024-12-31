@@ -43,9 +43,7 @@ struct Importer: View {
                     }
                 }
             }
-            
-            Spacer()
-                .frame(width: 100)
+        
         }
         
     }
