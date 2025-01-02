@@ -55,13 +55,23 @@ struct ContentView: View {
                             }
                             
                             // Insert text
-                            TextField("Enter \(isTextToBraille ? "text" : "braille")", text: isTextToBraille ? $textInput : $brailleOutput)
+                            ZStack(alignment: .topLeading){
+                                if (isTextToBraille ? textInput : brailleOutput).isEmpty {
+                                    Text("Enter \(isTextToBraille ? "text" : "braille")")
+                                        .foregroundColor(.gray)
+                                        .padding(.horizontal, 5)
+                                        .padding(.vertical, 8)
+                                }
+                                
+                                TextEditor(text: isTextToBraille ? $textInput : $brailleOutput)
+                                    .frame(minHeight: 80)
+                                    .padding(4)
                                 .accessibilityHint("Insert text here")
                                 .frame(height: 80)
                                 .background(Color.clear)
                                 .scrollContentBackground(.hidden)
-                                .foregroundColor(.gray)
-                                .font(.headline)
+                                .foregroundColor(.black)
+                                .font(.body)
                             
                                 .onChange(of: textInput) {
                                     if isTextToBraille {
@@ -69,6 +79,7 @@ struct ContentView: View {
                                     } else {
                                         textInput = Translate.translateToText(braille: brailleOutput)
                                     }
+                                }
                                 }
                             // add flashcard everytime you insert a text
                                 .onSubmit {
