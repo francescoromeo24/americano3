@@ -8,11 +8,23 @@
 import SwiftUI
 
 struct FlashcardDetailView: View {
+    let flashcard: Flashcard
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text(flashcard.word)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .padding()
+            
+            Text(flashcard.translation)
+                .font(.title2)
+                .foregroundColor(.gray)
+                .padding()
+            
+            Spacer()
+        }
+        .padding()
+        .navigationTitle("Flashcard Details")
     }
-}
-
-#Preview {
-    FlashcardDetailView()
 }

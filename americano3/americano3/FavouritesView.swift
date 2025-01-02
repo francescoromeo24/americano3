@@ -20,31 +20,36 @@ struct FavoritesView: View {
     }
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(starredFlashcards, id: \.id) { flashcard in
-                    VStack(alignment: .leading) {
-                        Text(flashcard.word)
-                            .font(.headline)
-                            .foregroundColor(.black)
-                        Text(flashcard.translation)
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        
-                        Button(action: {
-                            toggleFlashcardStar(for: flashcard)
-                        }) {
-                            Image(systemName: flashcard.isStarred ? "star.fill" : "star")
-                                .foregroundColor(.blue)
+        NavigationStack{
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 16) {
+                    ForEach(starredFlashcards, id: \.id) { flashcard in
+                        NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)) {
+                            VStack(alignment: .leading) {
+                                Text(flashcard.word)
+                                    .font(.headline)
+                                    .foregroundColor(.black)
+                                Text(flashcard.translation)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                
+                                Button(action: {
+                                    toggleFlashcardStar(for: flashcard)
+                                }) {
+                                    Image(systemName: flashcard.isStarred ? "star.fill" : "star")
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                            
+                            .frame(width: 146, height: 164)
+                            .background(RoundedRectangle(cornerRadius: 8).fill(Color.white).shadow(radius: 5))
                         }
                     }
-                    .frame(width: 146, height: 164)
-                    .background(RoundedRectangle(cornerRadius: 8).fill(Color.white).shadow(radius: 5))
                 }
+                .padding()
             }
-            .padding()
+            .navigationTitle("Favorites")
         }
-        .navigationTitle("Favorites")
     }
     
     func toggleFlashcardStar(for flashcard: Flashcard) {

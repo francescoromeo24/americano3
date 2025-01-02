@@ -55,7 +55,7 @@ struct ContentView: View {
                             }
                             
                             // Insert text
-                            ZStack(alignment: .topLeading){
+                            /*ZStack(alignment: .topLeading){
                                 if (isTextToBraille ? textInput : brailleOutput).isEmpty {
                                     Text("Enter \(isTextToBraille ? "text" : "braille")")
                                         .foregroundColor(.gray)
@@ -63,7 +63,9 @@ struct ContentView: View {
                                         .padding(.vertical, 8)
                                 }
                                 
-                                TextEditor(text: isTextToBraille ? $textInput : $brailleOutput)
+                                TextEditor(text: isTextToBraille ? $textInput : $brailleOutput)*/
+                            
+                            TextField("Enter \(isTextToBraille ? "text" : "braille")", text: isTextToBraille ? $textInput : $brailleOutput)
                                     .frame(minHeight: 80)
                                     .padding(4)
                                 .accessibilityHint("Insert text here")
@@ -80,7 +82,7 @@ struct ContentView: View {
                                         textInput = Translate.translateToText(braille: brailleOutput)
                                     }
                                 }
-                                }
+                                
                             // add flashcard everytime you insert a text
                                 .onSubmit {
                                     flashcardManager.addFlashcard(textInput: textInput, brailleOutput: brailleOutput)
@@ -207,15 +209,17 @@ struct ContentView: View {
                 //Flashcard Grid
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                     ForEach($flashcardManager.flashcards) { $flashcard in
-                        FlashcardView(flashcard: $flashcard)
-                        { updatedFlashcard in
-                            
-                            // Update the flashcard with the updated one
-                            if let index = flashcardManager.flashcards.firstIndex(where: { $0.id == flashcard.id }) {
-                                flashcardManager.flashcards[index] = updatedFlashcard
+                        NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)){
+                            FlashcardView(flashcard: $flashcard)
+                            { updatedFlashcard in
+                                
+                                // Update the flashcard with the updated one
+                                if let index = flashcardManager.flashcards.firstIndex(where: { $0.id == flashcard.id }) {
+                                    flashcardManager.flashcards[index] = updatedFlashcard
+                                }
                             }
+                            .frame(width: 146, height: 164) // Set the size of each flashcard
                         }
-                        .frame(width: 146, height: 164) // Set the size of each flashcard
                     }
                 }
                 

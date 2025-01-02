@@ -51,16 +51,7 @@ struct FlashcardView: View {
                     .shadow(radius: 2)
             )
             .padding(.horizontal)
-            // NavigationLink to navigate to the FavouritesView
-            /*NavigationLink(
-                 destination: FavouritesView(
-                     flashcards: .constant([flashcard]) // Pass single flashcard as example
-                 ),
-                 isActive: $navigateToFavourites,
-                 label: {
-                     EmptyView()
-                 }
-             )*/
+        
             
         }
     }

@@ -10,6 +10,7 @@ import Combine
 
 class FlashcardManager: ObservableObject {
     @Published var flashcards: [Flashcard] = []
+    @Published var selectedFlashcard: Flashcard?
     
     func addFlashcard(textInput: String, brailleOutput: String) {
         // Avoid adding a flashcard if no translation exists
@@ -21,6 +22,10 @@ class FlashcardManager: ObservableObject {
         if !flashcards.contains(where: { $0.word == newFlashcard.word }) {
             flashcards.append(newFlashcard) // Add flashcard
         }
+        if !flashcards.contains(where: { $0.word == newFlashcard.word }) {
+            flashcards.append(newFlashcard)
+              selectedFlashcard = newFlashcard // Seleziona la nuova flashcard per aprirla
+          }
     }
     
     func toggleFlashcardStar(for flashcard: Flashcard) {
