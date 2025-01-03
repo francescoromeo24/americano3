@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		537C4D2B2D287BFE0016191A /* americano3.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = americano3.xcodeproj; sourceTree = "<group>"; };
 		5385D1B72D0835F10068D791 /* americano3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = americano3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -29,6 +30,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		537C4D2C2D287BFE0016191A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		5385D1AE2D0835F10068D791 = {
 			isa = PBXGroup;
 			children = (
@@ -97,6 +105,12 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5385D1B82D0835F10068D791 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 537C4D2C2D287BFE0016191A /* Products */;
+					ProjectRef = 537C4D2B2D287BFE0016191A /* americano3.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				5385D1B62D0835F10068D791 /* americano3 */,
