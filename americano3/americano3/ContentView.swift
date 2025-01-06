@@ -22,8 +22,11 @@ struct ContentView: View {
     @State private var isTextToBraille = true
     //variable flashcard
     @StateObject private var flashcardManager = FlashcardManager()
+    //variable favourites
+    @State private var showingFavorites = false
     //Variables for recording
     @State private var isRecording = false
+    @State private var isCameraPresented = false
     @StateObject private var speechRecognizer = SpeechRecognizerCoordinator()
     
     var body: some View {
@@ -52,13 +55,25 @@ struct ContentView: View {
                             }
                             
                             // Insert text
+                            /*ZStack(alignment: .topLeading){
+                                if (isTextToBraille ? textInput : brailleOutput).isEmpty {
+                                    Text("Enter \(isTextToBraille ? "text" : "braille")")
+                                        .foregroundColor(.gray)
+                                        .padding(.horizontal, 5)
+                                        .padding(.vertical, 8)
+                                }
+                                
+                                TextEditor(text: isTextToBraille ? $textInput : $brailleOutput)*/
+                            
                             TextField("Enter \(isTextToBraille ? "text" : "braille")", text: isTextToBraille ? $textInput : $brailleOutput)
+                                    .frame(minHeight: 80)
+                                    .padding(4)
                                 .accessibilityHint("Insert text here")
                                 .frame(height: 80)
                                 .background(Color.clear)
                                 .scrollContentBackground(.hidden)
-                                .foregroundColor(.gray)
-                                .font(.headline)
+                                .foregroundColor(.black)
+                                .font(.body)
                             
                                 .onChange(of: textInput) {
                                     if isTextToBraille {
@@ -67,10 +82,11 @@ struct ContentView: View {
                                         textInput = Translate.translateToText(braille: brailleOutput)
                                     }
                                 }
+                                
                             // add flashcard everytime you insert a text
                                 .onSubmit {
                                     flashcardManager.addFlashcard(textInput: textInput, brailleOutput: brailleOutput)
-                                   textInput = ""
+                                    textInput = ""
                                     brailleOutput = ""
                                 }
                             
@@ -84,10 +100,11 @@ struct ContentView: View {
                                 
                                 Button(action: {
                                     isTextToBraille.toggle()
+                                    
                                     let temp = textInput
                                     textInput = brailleOutput
                                     brailleOutput = temp
-                                      
+                                    
                                 }) {
                                     ZStack {
                                         Image(systemName: "circle.fill")
@@ -95,6 +112,7 @@ struct ContentView: View {
                                             .font(.system(size: 40))
                                         Image(systemName: "arrow.trianglehead.swap")
                                             .font(.system(size: 20))
+                                            .accessibilityHint("This is the switch button")
                                     }
                                 }
                             }
@@ -124,7 +142,31 @@ struct ContentView: View {
                             // Importer from files
                             HStack {
                                 Importer()
+                                    .padding(.trailing)
                                     .accessibilityHint("You can import files here")
+                                
+                                
+                                
+        
+                                Button(action: {
+                                    isCameraPresented = true
+                                }) {
+                                    ZStack{
+                                        Image(systemName: "circle.fill")
+                                            .foregroundStyle(Color("Background"))
+                                            .font(.system(size: 50))
+                                        Image(systemName: "camera")
+                                            .font(.system(size: 25))
+                                    }
+                                }
+                                .fullScreenCover(isPresented: $isCameraPresented) {
+                                    CameraView { image in
+                                        processImage(image)
+                                    }
+                                    .edgesIgnoringSafeArea(.all)
+                                }
+                               
+                                
                                 // Microphone button
                                 SpeechRecognizerView()
                                 { result in
@@ -132,11 +174,10 @@ struct ContentView: View {
                                     brailleOutput = Translate.translateToBraille(text: result)
                                     
                                     flashcardManager.addFlashcard(textInput: textInput, brailleOutput: brailleOutput)
-                                    
                                 }
-                               
-                                
+                                .padding(.leading)
                             }
+                            
                             .padding(.top, 5)
                         }
                         .padding()
@@ -151,26 +192,42 @@ struct ContentView: View {
                             .fontWeight(.bold)
                             .foregroundStyle(.blue)
                             .padding(.leading, 20.0)
+                        
                         Spacer()
+                            
+                        
+                        Button(action: {
+                            showingFavorites.toggle()
+                        }) {
+                            Text("View Favorites")
+                                .foregroundColor(.blue)
+                        }
+                        .padding(.trailing, 20.0)
                     }
                 }
                 
                 //Flashcard Grid
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                     ForEach($flashcardManager.flashcards) { $flashcard in
-                        FlashcardView(flashcard: $flashcard)
-                        { updatedFlashcard in
-                            
-                            // Update the flashcard with the updated one
-                            if let index = flashcardManager.flashcards.firstIndex(where: { $0.id == flashcard.id }) {
-                                flashcardManager.flashcards[index] = updatedFlashcard
+                        NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)){
+                            FlashcardView(flashcard: $flashcard)
+                            { updatedFlashcard in
+                                
+                                // Update the flashcard with the updated one
+                                if let index = flashcardManager.flashcards.firstIndex(where: { $0.id == flashcard.id }) {
+                                    flashcardManager.flashcards[index] = updatedFlashcard
+                                }
                             }
+                            .frame(width: 146, height: 164) // Set the size of each flashcard
                         }
-                        .frame(width: 146, height: 164) // Set the size of each flashcard
                     }
                 }
+                
                 .foregroundStyle(.blue)
                 .padding()
+            }
+            .sheet(isPresented: $showingFavorites) {
+                FavoritesView(flashcards: $flashcardManager.flashcards)
             }
             .navigationTitle("Braille Translator")
             .foregroundColor(.blue)
@@ -178,6 +235,23 @@ struct ContentView: View {
         }
     }
     
+    private func processImage(_ image: UIImage) {
+        VisionProcessor.shared.recognizeText(from: image) { result in
+            DispatchQueue.main.async {
+                textInput = result
+                brailleOutput = Translate.translateToBraille(text: result)
+            }
+        }
+    }
+
+    
+    
+    
+    func toggleFlashcardStar(for flashcard: Flashcard) {
+        if let index = flashcardManager.flashcards.firstIndex(where: { $0.id == flashcard.id }) {
+            flashcardManager.flashcards[index].isStarred.toggle()
+        }
+    }
 }
 
 #Preview {
