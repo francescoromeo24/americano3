@@ -11,20 +11,27 @@ struct FlashcardDetailView: View {
     let flashcard: Flashcard
     
     var body: some View {
-        VStack {
-            Text(flashcard.word)
-                .font(.largeTitle)
-                .fontWeight(.bold)
+        NavigationStack{
+            ScrollView{
+                VStack {
+                    Text(flashcard.word)
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                        .padding()
+                    Text(flashcard.translation)
+                        .font(.title2)
+                        .foregroundColor(.gray)
+                    Spacer()
+                }
                 .padding()
-            
-            Text(flashcard.translation)
-                .font(.title2)
-                .foregroundColor(.gray)
-                .padding()
-            
-            Spacer()
+                .navigationTitle("Flashcard Details")
+            }
         }
-        .padding()
-        .navigationTitle("Flashcard Details")
     }
 }
+
+#Preview {
+    FlashcardDetailView(flashcard: Flashcard( word: "", translation: ""))
+}
+

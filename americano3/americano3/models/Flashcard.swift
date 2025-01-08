@@ -6,11 +6,10 @@
 //
 
 import Foundation
-import SwiftUI
 //characteristics flashcard
 
-struct Flashcard: Identifiable {
-    let id = UUID()
+struct Flashcard: Identifiable, Codable {
+    var id = UUID()
     let word: String
     let translation: String
     var isStarred: Bool = false

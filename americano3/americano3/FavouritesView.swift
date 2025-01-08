@@ -25,24 +25,37 @@ struct FavoritesView: View {
                 LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(starredFlashcards, id: \.id) { flashcard in
                         NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)) {
-                            VStack(alignment: .leading) {
-                                Text(flashcard.word)
-                                    .font(.headline)
-                                    .foregroundColor(.black)
-                                Text(flashcard.translation)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                
-                                Button(action: {
-                                    toggleFlashcardStar(for: flashcard)
-                                }) {
-                                    Image(systemName: flashcard.isStarred ? "star.fill" : "star")
-                                        .foregroundColor(.blue)
+                            VStack{
+                                VStack(alignment: .leading) {
+                                    Text(flashcard.word.isEmpty ? "Word" : flashcard.word)
+                                        .font(.headline)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.black)
+                                    Text(flashcard.translation.isEmpty ? "Translation" : flashcard.translation)
+                                        .font(.headline)
+                                        .foregroundColor(.gray)
+                                        .padding(.top, 2)
                                 }
+                                .padding()
+                                
+                                HStack {
+                                    Spacer()
+                                    Button(action: {
+                                        toggleFlashcardStar(for: flashcard)
+                                    }) {
+                                        Image(systemName:  "star.fill")
+                                            .foregroundColor(.blue)
+                                            .font(.title)
+                                    }
+                                    .padding()
+                                }
+                                
                             }
-                            
                             .frame(width: 146, height: 164)
-                            .background(RoundedRectangle(cornerRadius: 8).fill(Color.white).shadow(radius: 5))
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.white)
+                                    .shadow(radius: 2))
                         }
                     }
                 }
