@@ -10,7 +10,7 @@ struct FlashcardView: View {
     @Binding var flashcard: Flashcard
     var onToggleStar: (Flashcard) -> Void
     @State private var navigateToFavourites = false // State for navigation
-    @EnvironmentObject var flashcardManager: FlashcardManager
+    
     
     var body: some View {
         NavigationStack{
@@ -67,5 +67,5 @@ struct FlashcardView_Previews: PreviewProvider {
         )
         .previewLayout(.sizeThatFits)
         .padding()
-    }
+  }
 }

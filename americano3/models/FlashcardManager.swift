@@ -9,32 +9,64 @@ import Foundation
 import Combine
 
 class FlashcardManager: ObservableObject {
-    @Published var flashcards: [Flashcard] = []
+    @Published var flashcards: [Flashcard] = [] {
+        didSet {
+            saveFlashcards()
+        }
+    }
     @Published var selectedFlashcard: Flashcard?
-    
+
+    private let fileName = "flashcards.json"
+
+    init() {
+        loadFlashcards()
+    }
+
     func addFlashcard(textInput: String, brailleOutput: String) {
-        // Avoid adding a flashcard if no translation exists
         guard !textInput.isEmpty else { return }
         
-        // Create a new flashcard
         let newFlashcard = Flashcard(word: textInput, translation: brailleOutput)
         
         if !flashcards.contains(where: { $0.word == newFlashcard.word }) {
-            flashcards.append(newFlashcard) // Add flashcard
-        }
-        if !flashcards.contains(where: { $0.word == newFlashcard.word }) {
             flashcards.append(newFlashcard)
-              selectedFlashcard = newFlashcard // Seleziona la nuova flashcard per aprirla
-          }
+            selectedFlashcard = newFlashcard
+        }
     }
-    
+
     func toggleFlashcardStar(for flashcard: Flashcard) {
         if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
-            flashcards[index].isStarred.toggle()// Toggle starred state
-            
+            flashcards[index].isStarred.toggle()
         }
     }
-    var starredFlashcards: [Flashcard]{
-        flashcards.filter {$0.isStarred}
+
+    var starredFlashcards: [Flashcard] {
+        flashcards.filter { $0.isStarred }
+    }
+
+    // MARK: - Persistenza Dati
+
+    private func saveFlashcards() {
+        let fileURL = getFileURL()
+        do {
+            let data = try JSONEncoder().encode(flashcards)
+            try data.write(to: fileURL)
+        } catch {
+            print("Errore durante il salvataggio delle flashcard: \(error)")
+        }
+    }
+
+    private func loadFlashcards() {
+        let fileURL = getFileURL()
+        do {
+            let data = try Data(contentsOf: fileURL)
+            flashcards = try JSONDecoder().decode([Flashcard].self, from: data)
+        } catch {
+            print("Nessun dato trovato o errore durante il caricamento delle flashcard: \(error)")
+        }
+    }
+
+    private func getFileURL() -> URL {
+        let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        return documentDirectory.appendingPathComponent(fileName)
     }
 }

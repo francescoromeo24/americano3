@@ -238,8 +238,18 @@ struct ContentView: View {
     private func processImage(_ image: UIImage) {
         VisionProcessor.shared.recognizeText(from: image) { result in
             DispatchQueue.main.async {
-                textInput = result
-                brailleOutput = Translate.translateToBraille(text: result)
+                if result.isEmpty{
+                    textInput = "Nessun testo riconosciuto"
+                    brailleOutput = " "
+                }else{
+                    if isTextToBraille{
+                    textInput = result
+                    brailleOutput = Translate.translateToBraille(text: result)
+                    }else{
+                        textInput = Translate.translateToText(braille: result)
+                        brailleOutput = result
+                    }
+                }
             }
         }
     }
