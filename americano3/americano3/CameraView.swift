@@ -7,7 +7,6 @@
 
 import SwiftUI
 import UIKit
-import Vision
 
 struct CameraView: UIViewControllerRepresentable {
     var onImagePicked: (UIImage) -> Void
@@ -36,6 +35,10 @@ struct CameraView: UIViewControllerRepresentable {
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
             if let image = info[.originalImage] as? UIImage {
                 parent.onImagePicked(image)
+                // Chiamare la funzione OCR qui
+                performOCR(on: image) { text in
+                    print("Testo riconosciuto: \(text ?? "Nessun testo")")
+                }
             }
             picker.dismiss(animated: true)
         }
@@ -45,34 +48,7 @@ struct CameraView: UIViewControllerRepresentable {
         }
     }
 }
-func performOCR(on image: UIImage, completion: @escaping (String?) -> Void) {
-    guard let cgImage = image.cgImage else {
-        completion(nil)
-        return
-    }
 
-    let request = VNRecognizeTextRequest { (request, error) in
-        guard error == nil else {
-            completion(nil)
-            return
-        }
-
-        let recognizedStrings = request.results?.compactMap { result in
-            (result as? VNRecognizedTextObservation)?.topCandidates(1).first?.string
-        }
-
-        completion(recognizedStrings?.joined(separator: " "))
-    }
-
-    let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-    DispatchQueue.global(qos: .userInitiated).async {
-        do {
-            try handler.perform([request])
-        } catch {
-            completion(nil)
-        }
-    }
-}
 
 #Preview{
     CameraView { image in
