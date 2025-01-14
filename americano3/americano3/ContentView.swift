@@ -29,6 +29,10 @@ struct ContentView: View {
     @State private var isCameraPresented = false
     @StateObject private var speechRecognizer = SpeechRecognizerCoordinator()
     
+    @State private var selectedText: String?
+    @State private var selectedImage: UIImage?
+    @State private var translatedBraille: String?
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -141,7 +145,22 @@ struct ContentView: View {
                             
                             // Importer from files
                             HStack {
-                                Importer()
+                                Importer(
+                                    selectedText: $selectedText,
+                                    selectedImage: $selectedImage,
+                                    translatedBraille: $translatedBraille
+                                )
+                                .onChange(of: selectedText) { newText in
+                                    guard let newText else { return }
+                                    handleImportedText(newText)
+                                }
+                                .onChange(of: selectedImage) { newImage in
+                                    guard let newImage else { return }
+                                    processImage(newImage)
+                                }
+                                
+                                
+                                
                                     .padding(.trailing)
                                     .accessibilityHint("You can import files here")
                                 
@@ -232,7 +251,14 @@ struct ContentView: View {
             .navigationTitle("Braille Translator")
             .foregroundColor(.blue)
             .background(Color("Background"))
+            
         }
+    }
+    
+    private func handleImportedText(_ text: String) {
+        textInput = text
+        brailleOutput = isTextToBraille ? Translate.translateToBraille(text: text) : Translate.translateToText(braille: text)
+
     }
     
     private func processImage(_ image: UIImage) {
