@@ -32,6 +32,11 @@ class FlashcardManager: ObservableObject {
             selectedFlashcard = newFlashcard
         }
     }
+    
+    func removeFlashcard(_ flashcard: Flashcard) {
+        flashcards.removeAll { $0.id == flashcard.id }
+    }
+
 
     func toggleFlashcardStar(for flashcard: Flashcard) {
         if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
