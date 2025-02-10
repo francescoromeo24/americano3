@@ -11,281 +11,170 @@ import AVFoundation
 
 struct ContentView: View {
     
-    // Customization of navigation title
     init() {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.systemBlue]
     }
     
-    // Variables for translation
-    @State private var textInput = ""
-    @State private var brailleOutput = ""
-    @State private var isTextToBraille = true
-    //variable flashcard
-    @StateObject private var flashcardManager = FlashcardManager()
-    //variable favourites
-    @State private var showingFavorites = false
-    //Variables for recording
-    @State private var isRecording = false
-    @State private var isCameraPresented = false
-    @StateObject private var speechRecognizer = SpeechRecognizerCoordinator()
-    
-    @State private var selectedText: String?
-    @State private var selectedImage: UIImage?
-    @State private var translatedBraille: String?
-    
+    @StateObject private var viewModel = ContentViewFunc()
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    // Rectangle, text section, and buttons
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.white)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.blue, lineWidth: 2)
-                            )
-                            .frame(width: 370, height: 350)
-                        
-                        VStack {
-                            // Text section and text label
-                            HStack {
-                                Text(isTextToBraille ? "Text" : "Braille")
-                                    .accessibilityHint("This is the text label")
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Color.black)
-                                Spacer()
-                            }
-                            
-                            // Insert text
-                            /*ZStack(alignment: .topLeading){
-                                if (isTextToBraille ? textInput : brailleOutput).isEmpty {
-                                    Text("Enter \(isTextToBraille ? "text" : "braille")")
-                                        .foregroundColor(.gray)
-                                        .padding(.horizontal, 5)
-                                        .padding(.vertical, 8)
-                                }
-                                
-                                TextEditor(text: isTextToBraille ? $textInput : $brailleOutput)*/
-                            
-                            TextField("Enter \(isTextToBraille ? "text" : "braille")", text: isTextToBraille ? $textInput : $brailleOutput)
-                                    .frame(minHeight: 80)
-                                    .padding(4)
-                                .accessibilityHint("Insert text here")
-                                .frame(height: 80)
-                                .background(Color.clear)
-                                .scrollContentBackground(.hidden)
-                                .foregroundColor(.black)
-                                .font(.body)
-                            
-                                .onChange(of: textInput) {
-                                    if isTextToBraille {
-                                        brailleOutput = Translate.translateToBraille(text: textInput)
-                                    } else {
-                                        textInput = Translate.translateToText(braille: brailleOutput)
-                                    }
-                                }
-                                
-                            // add flashcard everytime you insert a text
-                                .onSubmit {
-                                    flashcardManager.addFlashcard(textInput: textInput, brailleOutput: brailleOutput)
-                                    textInput = ""
-                                    brailleOutput = ""
-                                }
-                            
-                            Spacer()
-                            
-                            // Line in the middle of the rectangle, switch button
-                            ZStack {
-                                Divider()
-                                    .frame(height: 2)
-                                    .background(Color.blue)
-                                
-                                Button(action: {
-                                    isTextToBraille.toggle()
-                                    
-                                    let temp = textInput
-                                    textInput = brailleOutput
-                                    brailleOutput = temp
-                                    
-                                }) {
-                                    ZStack {
-                                        Image(systemName: "circle.fill")
-                                            .foregroundStyle(Color("Background"))
-                                            .font(.system(size: 40))
-                                        Image(systemName: "arrow.trianglehead.swap")
-                                            .font(.system(size: 20))
-                                            .accessibilityHint("This is the switch button")
-                                    }
-                                }
-                            }
-                            Spacer()
-                            
-                            // Braille section, output
-                            VStack(alignment: .leading) {
-                                Text(isTextToBraille ? "Braille" : "Text")
-                                    .accessibilityHint("This is the Braille label")
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Color.black)
-                                
-                                ScrollView(.vertical, showsIndicators: true) {
-                                    Text(brailleOutput)
-                                        .accessibilityHint("This is the Braille Output")
-                                        .font(.headline)
-                                        .fontWeight(.medium)
-                                        .multilineTextAlignment(.leading)
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color.clear)
-                                        .foregroundColor(.gray)
-                                }
-                                .frame(height: 40)
-                            }
-                            
-                            // Importer from files
-                            HStack {
-                                Importer(
-                                    selectedText: $selectedText,
-                                    selectedImage: $selectedImage,
-                                    translatedBraille: $translatedBraille
-                                )
-                                .onChange(of: selectedText) { newText in
-                                    guard let newText else { return }
-                                    handleImportedText(newText)
-                                }
-                                .onChange(of: selectedImage) { newImage in
-                                    guard let newImage else { return }
-                                    processImage(newImage)
-                                }
-                                
-                                
-                                
-                                    .padding(.trailing)
-                                    .accessibilityHint("You can import files here")
-                                
-                                
-                                
-        
-                                Button(action: {
-                                    isCameraPresented = true
-                                }) {
-                                    ZStack{
-                                        Image(systemName: "circle.fill")
-                                            .foregroundStyle(Color("Background"))
-                                            .font(.system(size: 50))
-                                        Image(systemName: "camera")
-                                            .font(.system(size: 25))
-                                    }
-                                }
-                                .fullScreenCover(isPresented: $isCameraPresented) {
-                                    CameraView { image in
-                                        processImage(image)
-                                    }
-                                    .edgesIgnoringSafeArea(.all)
-                                }
-                               
-                                
-                                // Microphone button
-                                SpeechRecognizerView()
-                                { result in
-                                    textInput = result
-                                    brailleOutput = Translate.translateToBraille(text: result)
-                                    
-                                    flashcardManager.addFlashcard(textInput: textInput, brailleOutput: brailleOutput)
-                                }
-                                .padding(.leading)
-                            }
-                            
-                            .padding(.top, 5)
-                        }
-                        .padding()
-                    }
-                    .padding(.vertical, 10)
                     
-                    // History section
+                    // Text Input Section
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(viewModel.isTextToBraille ? "Text" : "Braille")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                            .padding([.top, .leading], 10.0)
+
+                      
+                        TextField(viewModel.placeholderText(), text: $viewModel.textInput, axis: .vertical)
+                            .padding()
+                            .frame(minHeight: 80)
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 2))
+                            .foregroundColor(.gray)
+                            .accessibilityHint("Insert text here")
+                            .onChange(of: viewModel.textInput) {
+                                viewModel.updateTranslation()
+                            }
+                            .padding(5)
+                    }
+                    
+                    // Button Row: Switch & Add Flashcard
+                    HStack {
+                        Button(action: {
+                            viewModel.swapTranslation()
+                        }) {
+                            Image(systemName: "arrow.trianglehead.swap")
+                                .font(.system(size: 20))
+                                .foregroundColor(.blue)
+                                .padding()
+                                .background(Circle().stroke(Color.blue, lineWidth: 2))
+                        }
+                        
+                        Spacer()
+                            .frame(width: 30)
+                        
+                        Button(action: {
+                            viewModel.addFlashcard()
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 20))
+                                .foregroundColor(.blue)
+                                .padding()
+                                .background(Circle().stroke(Color.blue, lineWidth: 2))
+                        }
+                    }
+                    .padding(.top,5.0)
+                    
+                    
+                    // Braille Output Section
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(viewModel.isTextToBraille ? "Braille" : "Text")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                            .padding([.top, .leading], 10.0)
+                    
+                        
+                        ScrollView(.vertical, showsIndicators: true) {
+                            TextField("Translation", text: $viewModel.brailleOutput, axis: .vertical)
+                                .font(.custom("Courier", size: 20))
+                            
+                                .padding()
+                                .frame(minHeight: 80)
+                                .background(Color.white)
+                                .cornerRadius(10)
+                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 2))
+                                .foregroundColor(.gray)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .disabled(true)
+                                .accessibilityLabel(viewModel.textInput.map { String($0) }.joined(separator: ", "))
+                                .accessibilityHint("Swipe per ascoltare lettera per lettera")
+                        }
+                        .padding(5)
+                        .frame(minHeight: 80)
+                    }
+                   
+
+                    // Importer and Camera Buttons
+                    HStack {
+                        Importer(selectedText: $viewModel.selectedText, selectedImage: $viewModel.selectedImage, translatedBraille: $viewModel.translatedBraille)
+                            
+                        Spacer()
+                            .frame(width: 20)
+                        
+                        Button(action: {
+                            viewModel.isCameraPresented = true
+                        }) {
+                            Image(systemName: "camera")
+                                .font(.system(size: 25))
+                                .foregroundColor(.blue)
+                                .padding()
+                                .background(Circle().stroke(Color.blue, lineWidth: 2))
+                        }
+                        .fullScreenCover(isPresented: $viewModel.isCameraPresented) {
+                            CameraView { image in
+                                viewModel.processImage(image)
+                            }
+                        }
+                        
+                        Spacer()
+                            .frame(width: 20)
+                        
+                        SpeechRecognizerView() { result in
+                            viewModel.textInput = result
+                            viewModel.updateTranslation()
+                        }
+                       
+                    }
+                    .padding(.top, 5)
+                    
+                    // History Section
                     HStack {
                         Text("History")
-                            .accessibilityHint("This is the history section")
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundStyle(.blue)
-                            .padding(.leading, 20.0)
                         
                         Spacer()
-                            
                         
                         Button(action: {
-                            showingFavorites.toggle()
+                            viewModel.showingFavorites.toggle()
                         }) {
                             Text("View Favorites")
                                 .foregroundColor(.blue)
                         }
-                        .padding(.trailing, 20.0)
                     }
-                }
-                
-                //Flashcard Grid
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                    ForEach($flashcardManager.flashcards) { $flashcard in
-                        NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)){
-                            FlashcardView(flashcard: $flashcard)
-                            { updatedFlashcard in
-                                
-                                // Update the flashcard with the updated one
-                                if let index = flashcardManager.flashcards.firstIndex(where: { $0.id == flashcard.id }) {
-                                    flashcardManager.flashcards[index] = updatedFlashcard
+                    .padding(.horizontal)
+                    
+                    // Flashcard Grid
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+                        ForEach($viewModel.flashcardManager.flashcards) { $flashcard in
+                            NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)) {
+                                FlashcardView(flashcard: $flashcard) { updatedFlashcard in
+                                    viewModel.updateFlashcard(updatedFlashcard)
                                 }
+                                .frame(width: 146, height: 164)
                             }
-                            .frame(width: 146, height: 164) // Set the size of each flashcard
                         }
                     }
+                    .foregroundStyle(.blue)
+                    .padding()
                 }
-                
-                .foregroundStyle(.blue)
-                .padding()
             }
-            .sheet(isPresented: $showingFavorites) {
-                FavoritesView(flashcards: $flashcardManager.flashcards)
+            .onTapGesture { viewModel.hideKeyboard() }
+            .sheet(isPresented: $viewModel.showingFavorites) {
+                FavoritesView(flashcards: $viewModel.flashcardManager.flashcards)
             }
-            .navigationTitle("Braille Translator")
+            .navigationTitle("Translate")
             .foregroundColor(.blue)
             .background(Color("Background"))
-            
-        }
-    }
-    
-    private func handleImportedText(_ text: String) {
-        textInput = text
-        brailleOutput = isTextToBraille ? Translate.translateToBraille(text: text) : Translate.translateToText(braille: text)
-
-    }
-    
-    private func processImage(_ image: UIImage) {
-        VisionProcessor.shared.recognizeText(from: image) { result in
-            DispatchQueue.main.async {
-                if result.isEmpty{
-                    textInput = "Nessun testo riconosciuto"
-                    brailleOutput = " "
-                }else{
-                    if isTextToBraille{
-                    textInput = result
-                    brailleOutput = Translate.translateToBraille(text: result)
-                    }else{
-                        textInput = Translate.translateToText(braille: result)
-                        brailleOutput = result
-                    }
-                }
-            }
-        }
-    }
-
-    
-    
-    
-    func toggleFlashcardStar(for flashcard: Flashcard) {
-        if let index = flashcardManager.flashcards.firstIndex(where: { $0.id == flashcard.id }) {
-            flashcardManager.flashcards[index].isStarred.toggle()
         }
     }
 }
