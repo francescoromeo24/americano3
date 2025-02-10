@@ -16,8 +16,10 @@ class ContentViewFunc: ObservableObject {
     @Published var isCameraPresented = false
     @Published var showingFavorites = false
     @Published var selectedImage: UIImage?
-    @Published var selectedText: String?{
-        didSet{
+    @Published var flashcardToDelete: Flashcard?
+    @Published var showingDeleteConfirmation = false
+    @Published var selectedText: String? {
+        didSet {
             if let text = selectedText {
                 textInput = text
                 updateTranslation()
@@ -62,6 +64,13 @@ class ContentViewFunc: ObservableObject {
         }
     }
 
+    func deleteFlashcard() {
+        if let flashcard = flashcardToDelete {
+            flashcardManager.flashcards.removeAll { $0.id == flashcard.id }
+            flashcardToDelete = nil
+        }
+    }
+
     func giveHapticFeedbackForEachLetter(oldText: String, newText: String) {
         guard oldText != newText else { return }
         
@@ -92,9 +101,11 @@ class ContentViewFunc: ObservableObject {
             }
         }
     }
+    
     func placeholderText() -> String {
-            return isTextToBraille ? "Enter text" : "⠑⠝⠞⠑⠗ ⠃⠗⠁⠊⠇⠇⠑"
-        }
+        return isTextToBraille ? "Enter text" : "⠑⠝⠞⠑⠗ ⠃⠗⠁⠊⠇⠇⠑"
+    }
+    
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }

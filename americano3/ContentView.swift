@@ -30,7 +30,6 @@ struct ContentView: View {
                             .foregroundColor(.black)
                             .padding([.top, .leading], 10.0)
 
-                      
                         TextField(viewModel.placeholderText(), text: $viewModel.textInput, axis: .vertical)
                             .padding()
                             .frame(minHeight: 80)
@@ -70,8 +69,7 @@ struct ContentView: View {
                                 .background(Circle().stroke(Color.blue, lineWidth: 2))
                         }
                     }
-                    .padding(.top,5.0)
-                    
+                    .padding(.top, 5.0)
                     
                     // Braille Output Section
                     VStack(alignment: .leading, spacing: 5) {
@@ -80,12 +78,10 @@ struct ContentView: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.black)
                             .padding([.top, .leading], 10.0)
-                    
-                        
+
                         ScrollView(.vertical, showsIndicators: true) {
                             TextField("Translation", text: $viewModel.brailleOutput, axis: .vertical)
                                 .font(.custom("Courier", size: 20))
-                            
                                 .padding()
                                 .frame(minHeight: 80)
                                 .background(Color.white)
@@ -100,7 +96,6 @@ struct ContentView: View {
                         .padding(5)
                         .frame(minHeight: 80)
                     }
-                   
 
                     // Importer and Camera Buttons
                     HStack {
@@ -131,10 +126,9 @@ struct ContentView: View {
                             viewModel.textInput = result
                             viewModel.updateTranslation()
                         }
-                       
                     }
                     .padding(.top, 5)
-                    
+
                     // History Section
                     HStack {
                         Text("History")
@@ -152,15 +146,17 @@ struct ContentView: View {
                         }
                     }
                     .padding(.horizontal)
-                    
+
                     // Flashcard Grid
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                         ForEach($viewModel.flashcardManager.flashcards) { $flashcard in
-                            NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)) {
-                                FlashcardView(flashcard: $flashcard) { updatedFlashcard in
-                                    viewModel.updateFlashcard(updatedFlashcard)
-                                }
-                                .frame(width: 146, height: 164)
+                            FlashcardView(flashcard: $flashcard) { updatedFlashcard in
+                                viewModel.updateFlashcard(updatedFlashcard)
+                            }
+                            .frame(width: 146, height: 164)
+                            .onLongPressGesture {
+                                viewModel.flashcardToDelete = flashcard
+                                viewModel.showingDeleteConfirmation = true
                             }
                         }
                     }
@@ -171,6 +167,14 @@ struct ContentView: View {
             .onTapGesture { viewModel.hideKeyboard() }
             .sheet(isPresented: $viewModel.showingFavorites) {
                 FavoritesView(flashcards: $viewModel.flashcardManager.flashcards)
+            }
+            .alert("Delete Flashcard?", isPresented: $viewModel.showingDeleteConfirmation) {
+                Button("Cancel", role: .cancel) { viewModel.flashcardToDelete = nil }
+                Button("Delete", role: .destructive) {
+                    viewModel.deleteFlashcard()
+                }
+            } message: {
+                Text("Are you sure you want to delete this flashcard?")
             }
             .navigationTitle("Translate")
             .foregroundColor(.blue)
