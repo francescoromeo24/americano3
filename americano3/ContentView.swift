@@ -38,6 +38,7 @@ struct ContentView: View {
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 2))
                             .foregroundColor(.gray)
                             .accessibilityHint("Insert text here")
+                            .accessibilityHint("Enter text here to translate")
                             .onChange(of: viewModel.textInput) {
                                 viewModel.updateTranslation()
                             }
@@ -55,6 +56,7 @@ struct ContentView: View {
                                 .padding()
                                 .background(Circle().stroke(Color.blue, lineWidth: 2))
                         }
+                        
                         
                         Spacer()
                             .frame(width: 30)
@@ -100,6 +102,7 @@ struct ContentView: View {
                     // Importer and Camera Buttons
                     HStack {
                         Importer(selectedText: $viewModel.selectedText, selectedImage: $viewModel.selectedImage, translatedBraille: $viewModel.translatedBraille)
+                        
                             
                         Spacer()
                             .frame(width: 20)
@@ -114,11 +117,11 @@ struct ContentView: View {
                                 .background(Circle().stroke(Color.blue, lineWidth: 2))
                         }
                         .fullScreenCover(isPresented: $viewModel.isCameraPresented) {
-                            CameraView { image in
+                            CameraView(isBraille: viewModel.isBraille) { image in
                                 viewModel.processImage(image)
                             }
+                            .edgesIgnoringSafeArea(.all)
                         }
-                        
                         Spacer()
                             .frame(width: 20)
                         
@@ -149,14 +152,12 @@ struct ContentView: View {
 
                     // Flashcard Grid
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                        ForEach($viewModel.flashcardManager.flashcards) { $flashcard in
-                            FlashcardView(flashcard: $flashcard) { updatedFlashcard in
-                                viewModel.updateFlashcard(updatedFlashcard)
-                            }
-                            .frame(width: 146, height: 164)
-                            .onLongPressGesture {
-                                viewModel.flashcardToDelete = flashcard
-                                viewModel.showingDeleteConfirmation = true
+                        ForEach($viewModel.flashcardManager.sortedFlashcards) { $flashcard in
+                            NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)) {
+                                FlashcardView(flashcard: $flashcard) { updatedFlashcard in
+                                    viewModel.updateFlashcard(updatedFlashcard)
+                                }
+                                .frame(width: 146, height: 164)
                             }
                         }
                     }

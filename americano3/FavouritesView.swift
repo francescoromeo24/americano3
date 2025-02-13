@@ -17,6 +17,7 @@ struct FavoritesView: View {
     
     var starredFlashcards: [Flashcard] {
         flashcards.filter { $0.isStarred }
+            .sorted{$0.dateAdded > $1.dateAdded}
     }
     
     var body: some View {
@@ -94,8 +95,8 @@ struct FavoritesView: View {
 
 #Preview {
     FavoritesView(flashcards: .constant([
-        Flashcard( word: "", translation: "", isStarred: true),
-        Flashcard(word: "", translation: "", isStarred: true)
+        Flashcard( word: "", translation: "", isStarred: true, dateAdded: Date()),
+        Flashcard(word: "", translation: "", isStarred: true, dateAdded: Date())
     ]))
 }
 

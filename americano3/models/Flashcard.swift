@@ -13,5 +13,6 @@ struct Flashcard: Identifiable, Codable {
     let word: String
     let translation: String
     var isStarred: Bool = false
+    let dateAdded: Date 
 }
 
