@@ -64,12 +64,6 @@ struct FlashcardView: View {
                             .accessibilityHint("Double tap to toggle favorite status and go to favorites if added")
                     }
                     .padding()
-                   /* .background(
-                        NavigationLink(destination: FavoritesView(), isActive: $navigateToFavourites) {
-                            EmptyView()
-                        }
-                        .hidden()
-                    )*/
                 }
             }
             .frame(width: 146, height: 164)
@@ -97,7 +91,7 @@ struct FlashcardView: View {
 struct FlashcardView_Previews: PreviewProvider {
     static var previews: some View {
         FlashcardView(
-            flashcard: .constant(Flashcard(word: "Hello", translation: "Ciao", isStarred: false)),
+            flashcard: .constant(Flashcard(word: "Hello", translation: "Ciao", isStarred: false, dateAdded: Date())),
             onToggleStar: { flashcard in
                 print("Toggled star for flashcard with word: \(flashcard.word)")
             }

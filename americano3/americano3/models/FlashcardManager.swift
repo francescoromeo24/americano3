@@ -11,21 +11,24 @@ import Combine
 class FlashcardManager: ObservableObject {
     @Published var flashcards: [Flashcard] = [] {
         didSet {
+            sortedFlashcards = flashcards.sorted {$0.dateAdded > $1.dateAdded}
             saveFlashcards()
         }
     }
     @Published var selectedFlashcard: Flashcard?
+    @Published var sortedFlashcards: [Flashcard] = []
 
     private let fileName = "flashcards.json"
 
     init() {
         loadFlashcards()
     }
+    
 
     func addFlashcard(textInput: String, brailleOutput: String) {
         guard !textInput.isEmpty else { return }
         
-        let newFlashcard = Flashcard(word: textInput, translation: brailleOutput)
+        let newFlashcard = Flashcard(word: textInput, translation: brailleOutput, dateAdded: Date())
         
         if !flashcards.contains(where: { $0.word == newFlashcard.word }) {
             flashcards.append(newFlashcard)

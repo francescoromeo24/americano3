@@ -65,6 +65,6 @@ struct FlashcardDetailView: View {
 // Anteprima
 struct FlashcardDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        FlashcardDetailView(flashcard: Flashcard(word: "Hello world", translation: "⠓⠑⠇⠇⠕ ⠺⠕⠗⠇⠙"))
+        FlashcardDetailView(flashcard: Flashcard(word: "Hello world", translation: "⠓⠑⠇⠇⠕ ⠺⠕⠗⠇⠙", dateAdded: Date()))
     }
 }

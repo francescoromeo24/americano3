@@ -27,12 +27,12 @@ struct SpeechRecognizerView: View {
             isRecording.toggle()
         }) {
             ZStack {
-                Circle()
-                    .fill(isRecording ? Color.red : Color("Background"))
-                    .frame(width: 50, height: 50)
+                
                 Image(systemName: "microphone")
+                    .font(.system(size: 25))
                     .foregroundColor(.blue)
-                    .font(.title)
+                    .padding()
+                    .background(Circle().fill(isRecording ? Color.red : Color("Backgound")).stroke(Color.blue, lineWidth: 2))
             }
             
         }
