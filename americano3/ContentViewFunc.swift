@@ -23,23 +23,29 @@ class ContentViewFunc: ObservableObject {
     @Published var selectedText: String? {
         didSet {
             if let text = selectedText {
-                textInput = text
-                updateTranslation()
+                DispatchQueue.main.async {
+                    self.selectedText = nil  // Resetta temporaneamente
+                    self.textInput = text
+                    self.updateTranslation()
+                }
             }
         }
     }
 
+
     @Published var translatedBraille: String?
 
     func updateTranslation() {
-        if isTextToBraille {
-            let newBraille = Translate.translateToBraille(text: textInput)
-            giveHapticFeedbackForEachLetter(oldText: brailleOutput, newText: newBraille)
-            brailleOutput = newBraille
-        } else {
-            let newText = Translate.translateToText(braille: brailleOutput)
-            giveHapticFeedbackForEachLetter(oldText: textInput, newText: newText)
-            textInput = newText
+        DispatchQueue.main.async {  // Assicura che il codice venga eseguito sul main thread
+            if self.isTextToBraille {
+                let newBraille = Translate.translateToBraille(text: self.textInput)
+                self.giveHapticFeedbackForEachLetter(oldText: self.brailleOutput, newText: newBraille)
+                self.brailleOutput = newBraille
+            } else {
+                let newText = Translate.translateToText(braille: self.brailleOutput)
+                self.giveHapticFeedbackForEachLetter(oldText: self.textInput, newText: newText)
+                self.textInput = newText
+            }
         }
     }
 
@@ -93,32 +99,29 @@ class ContentViewFunc: ObservableObject {
         return text.allSatisfy { brailleCharacterRange.contains(String($0)) }
     }
 
-    func processImage(_ image: UIImage) {
-        // Chiamata alla funzione performOCR per eseguire il riconoscimento del testo
-        performOCR(on: image) { (recognizedText, success) in
+    func processImage(_ image: UIImage?) {
+        guard let validImage = image else {
+            print("❌ Errore: immagine nulla in processImage")
+            return
+        }
+
+        performOCR(on: validImage) { (recognizedText, success, isBrailleDetected) in
             DispatchQueue.main.async {
                 if let result = recognizedText {
-                    if self.isBraille {
-                        // Se il testo è Braille, traducilo in testo
-                        self.textInput = Translate.translateToText(braille: result)
-                        self.brailleOutput = result
-                        print("🔹 Braille riconosciuto, tradotto in testo: \(self.textInput)")
+                    if self.isBraille || isBrailleDetected {
+                        self.selectedText = Translate.translateToText(braille: result)
+                        self.translatedBraille = result
                     } else {
-                        // Se il testo è normale, traducilo in Braille
-                        self.textInput = result
-                        self.brailleOutput = Translate.translateToBraille(text: result)
-                        print("🔹 Testo normale, tradotto in Braille: \(self.brailleOutput)")
+                        self.selectedText = result
+                        self.translatedBraille = Translate.translateToBraille(text: result)
                     }
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 } else {
-                    self.textInput = "Nessun testo riconosciuto"
-                    self.brailleOutput = " "
+                    self.selectedText = "Nessun testo riconosciuto"
+                    self.translatedBraille = " "
                 }
             }
         }
     }
-
-
 
 
 

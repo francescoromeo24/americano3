@@ -16,7 +16,7 @@ struct ContentView: View {
     }
     
     @StateObject private var viewModel = ContentViewFunc()
-
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -29,7 +29,7 @@ struct ContentView: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.black)
                             .padding([.top, .leading], 10.0)
-
+                        
                         TextField(viewModel.placeholderText(), text: $viewModel.textInput, axis: .vertical)
                             .padding()
                             .frame(minHeight: 80)
@@ -80,7 +80,7 @@ struct ContentView: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.black)
                             .padding([.top, .leading], 10.0)
-
+                        
                         ScrollView(.vertical, showsIndicators: true) {
                             TextField("Translation", text: $viewModel.brailleOutput, axis: .vertical)
                                 .font(.custom("Courier", size: 20))
@@ -98,12 +98,12 @@ struct ContentView: View {
                         .padding(5)
                         .frame(minHeight: 80)
                     }
-
+                    
                     // Importer and Camera Buttons
                     HStack {
                         Importer(selectedText: $viewModel.selectedText, selectedImage: $viewModel.selectedImage, translatedBraille: $viewModel.translatedBraille)
                         
-                            
+                        
                         Spacer()
                             .frame(width: 20)
                         
@@ -116,12 +116,19 @@ struct ContentView: View {
                                 .padding()
                                 .background(Circle().stroke(Color.blue, lineWidth: 2))
                         }
+                        
                         .fullScreenCover(isPresented: $viewModel.isCameraPresented) {
-                            CameraView(isBraille: viewModel.isBraille) { image in
-                                viewModel.processImage(image)
+                            CameraView(isBraille: viewModel.isBraille) { recognizedText in
+                                DispatchQueue.main.async {
+                                    viewModel.textInput = recognizedText
+                                    viewModel.updateTranslation()
+                                    viewModel.isCameraPresented = false
+                                }
                             }
+
                             .edgesIgnoringSafeArea(.all)
                         }
+
                         Spacer()
                             .frame(width: 20)
                         
@@ -131,7 +138,7 @@ struct ContentView: View {
                         }
                     }
                     .padding(.top, 5)
-
+                    
                     // History Section
                     HStack {
                         Text("History")
@@ -149,7 +156,7 @@ struct ContentView: View {
                         }
                     }
                     .padding(.horizontal)
-
+                    
                     // Flashcard Grid
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                         ForEach($viewModel.flashcardManager.sortedFlashcards) { $flashcard in
