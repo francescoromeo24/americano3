@@ -14,7 +14,7 @@ struct FlashcardView: View {
 
     var body: some View {
         VStack {
-            // Flashcard content (cliccabile per aprire il dettaglio)
+            // Flashcard content (click to see details)
             VStack(alignment: .leading) {
                 Text(flashcard.word.isEmpty ? "Word" : flashcard.word)
                     .font(.headline)
@@ -54,7 +54,10 @@ struct FlashcardView: View {
                 .padding()
             }
         }
-        .frame(width: 146, height: 164)
+        .frame(
+            width: UIDevice.current.userInterfaceIdiom == .pad ? 200 : 146,
+            height: UIDevice.current.userInterfaceIdiom == .pad ? 220 : 164
+        )
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.white)
@@ -67,12 +70,12 @@ struct FlashcardView: View {
             FlashcardDetailView(flashcard: flashcard)
         }
     }
-
+// haptic feedback
     private func provideHapticFeedback() {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
     }
-
+//send to favorites
     private func announceStarStatus() {
         let status = flashcard.isStarred ? "Added to favorites" : "Removed from favorites"
         UIAccessibility.post(notification: .announcement, argument: status)

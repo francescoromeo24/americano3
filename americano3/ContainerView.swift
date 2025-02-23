@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContainerView: View {
     init() {
-          // Colore delle icone e testo
+          // Color icons and text
         UITabBar.appearance().unselectedItemTintColor = UIColor.systemBlue
         UITabBar.appearance().tintColor = UIColor.blue
       }

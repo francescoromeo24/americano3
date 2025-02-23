@@ -12,6 +12,7 @@ import AVFoundation
 struct ContentView: View {
     
     init() {
+        // Customize the appearance of the navigation bar title
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.systemBlue]
     }
     
@@ -30,6 +31,7 @@ struct ContentView: View {
                             .foregroundColor(.black)
                             .padding([.top, .leading], 10.0)
                         
+                        // User text input field
                         TextField(viewModel.placeholderText(), text: $viewModel.textInput, axis: .vertical)
                             .padding()
                             .frame(minHeight: 80)
@@ -37,7 +39,6 @@ struct ContentView: View {
                             .cornerRadius(10)
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 2))
                             .foregroundColor(.gray)
-                            .accessibilityHint("Insert text here")
                             .accessibilityHint("Enter text here to translate")
                             .onChange(of: viewModel.textInput) {
                                 viewModel.updateTranslation()
@@ -45,8 +46,9 @@ struct ContentView: View {
                             .padding(5)
                     }
                     
-                    // Button Row: Switch & Add Flashcard
+                    // Button Row: Switch Translation Mode & Add Flashcard
                     HStack {
+                        // Button to swap translation direction
                         Button(action: {
                             viewModel.swapTranslation()
                         }) {
@@ -57,10 +59,10 @@ struct ContentView: View {
                                 .background(Circle().stroke(Color.blue, lineWidth: 2))
                         }
                         
-                        
                         Spacer()
-                            .frame(width: 30)
+                            .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 60:20)
                         
+                        // Button to add a flashcard
                         Button(action: {
                             viewModel.addFlashcard()
                         }) {
@@ -81,6 +83,7 @@ struct ContentView: View {
                             .foregroundColor(.black)
                             .padding([.top, .leading], 10.0)
                         
+                        // Display the translated Braille output
                         ScrollView(.vertical, showsIndicators: true) {
                             TextField("Translation", text: $viewModel.brailleOutput, axis: .vertical)
                                 .font(.custom("Courier", size: 20))
@@ -91,9 +94,9 @@ struct ContentView: View {
                                 .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 2))
                                 .foregroundColor(.gray)
                                 .fixedSize(horizontal: false, vertical: true)
-                                .disabled(true)
+                                .disabled(true) // Make the output read-only
                                 .accessibilityLabel(viewModel.textInput.map { String($0) }.joined(separator: ", "))
-                                .accessibilityHint("Swipe per ascoltare lettera per lettera")
+                                .accessibilityHint("Swipe to hear letter by letter")
                         }
                         .padding(5)
                         .frame(minHeight: 80)
@@ -101,12 +104,13 @@ struct ContentView: View {
                     
                     // Importer and Camera Buttons
                     HStack {
+                        // Import text or image for translation
                         Importer(selectedText: $viewModel.selectedText, selectedImage: $viewModel.selectedImage, translatedBraille: $viewModel.translatedBraille)
                         
-                        
                         Spacer()
-                            .frame(width: 20)
+                            .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 60:20)
                         
+                        // Open the camera to capture text
                         Button(action: {
                             viewModel.isCameraPresented = true
                         }) {
@@ -125,13 +129,13 @@ struct ContentView: View {
                                     viewModel.isCameraPresented = false
                                 }
                             }
-
                             .edgesIgnoringSafeArea(.all)
                         }
-
-                        Spacer()
-                            .frame(width: 20)
                         
+                        Spacer()
+                            .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 60:20)
+                        
+                        // Speech recognition button
                         SpeechRecognizerView() { result in
                             viewModel.textInput = result
                             viewModel.updateTranslation()
@@ -148,6 +152,7 @@ struct ContentView: View {
                         
                         Spacer()
                         
+                        // Toggle to show favorite flashcards
                         Button(action: {
                             viewModel.showingFavorites.toggle()
                         }) {
@@ -157,14 +162,20 @@ struct ContentView: View {
                     }
                     .padding(.horizontal)
                     
-                    // Flashcard Grid
+                    // Flashcard Grid Display
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                         ForEach($viewModel.flashcardManager.sortedFlashcards) { $flashcard in
                             NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)) {
                                 FlashcardView(flashcard: $flashcard) { updatedFlashcard in
                                     viewModel.updateFlashcard(updatedFlashcard)
                                 }
-                                .frame(width: 146, height: 164)
+                                .frame(
+                                    width: UIDevice.current.userInterfaceIdiom == .pad ? 200 : 146,
+                                    height: UIDevice.current.userInterfaceIdiom == .pad ? 220 : 164)
+                                .onLongPressGesture {
+                                    viewModel.flashcardToDelete = flashcard
+                                    viewModel.showingDeleteConfirmation = true
+                                }
                             }
                         }
                     }
@@ -172,7 +183,7 @@ struct ContentView: View {
                     .padding()
                 }
             }
-            .onTapGesture { viewModel.hideKeyboard() }
+            .onTapGesture { viewModel.hideKeyboard() } // Hide keyboard when tapping outside
             .sheet(isPresented: $viewModel.showingFavorites) {
                 FavoritesView(flashcards: $viewModel.flashcardManager.flashcards)
             }

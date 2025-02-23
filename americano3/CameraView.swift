@@ -37,16 +37,21 @@ struct CameraView: UIViewControllerRepresentable {
             self.parent = parent
         }
 
+        // Called when an image is picked from the camera
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
             if let image = info[.originalImage] as? UIImage {
+                // Perform OCR on the selected image
                 performOCR(on: image) { text, success, isBrailleDetected in
                     DispatchQueue.main.async {
                         if success, let recognizedText = text {
+                            // Translate Braille if detected or use the recognized text
                             let translatedText = self.parent.isBraille || isBrailleDetected
                                 ? Translate.translateToText(braille: recognizedText)
                                 : recognizedText
+                            // Pass the final translated text back to the parent view
                             self.parent.onTextRecognized(translatedText)
                         } else {
+                            // If OCR fails, pass an error message
                             self.parent.onTextRecognized("Recognition error")
                         }
                     }
@@ -55,6 +60,7 @@ struct CameraView: UIViewControllerRepresentable {
             picker.dismiss(animated: true)
         }
 
+        // Called when the user cancels image picking
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             picker.dismiss(animated: true)
         }

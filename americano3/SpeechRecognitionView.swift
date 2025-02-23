@@ -13,7 +13,7 @@ struct SpeechRecognizerView: View {
     @State private var isRecording = false
     @StateObject private var speechRecognizer = SpeechRecognizerCoordinator()
 
-    var onTranscriptionResult: (String) -> Void // Callback per restituire il testo trascritto
+    var onTranscriptionResult: (String) -> Void // Callback to return transcribed text
 
     var body: some View {
         Button(action: {
@@ -21,20 +21,18 @@ struct SpeechRecognizerView: View {
                 speechRecognizer.stopRecording()
             } else {
                 speechRecognizer.startRecording { result in
-                    onTranscriptionResult(result) // Restituisce il risultato trascritto al ContentView
+                    onTranscriptionResult(result) // Returns the transcribed result to ContentView
                 }
             }
             isRecording.toggle()
         }) {
             ZStack {
-                
                 Image(systemName: "microphone")
                     .font(.system(size: 25))
                     .foregroundColor(.blue)
                     .padding()
-                    .background(Circle().fill(isRecording ? Color.red : Color("Backgound")).stroke(Color.blue, lineWidth: 2))
+                    .background(Circle().fill(isRecording ? Color.red : Color("Background")).stroke(Color.blue, lineWidth: 2))
             }
-            
         }
     }
 }
@@ -67,7 +65,7 @@ final class SpeechRecognizerCoordinator: NSObject, ObservableObject {
     }
 
     func stopRecording() {
-        audioEngine.inputNode.removeTap(onBus: 0) // Rimuove il tap
+        audioEngine.inputNode.removeTap(onBus: 0) // Removes tap on the input node
         audioEngine.stop()
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
@@ -98,7 +96,7 @@ final class SpeechRecognizerCoordinator: NSObject, ObservableObject {
         }
 
         let inputNode = audioEngine.inputNode
-        let recordingFormat = inputNode.inputFormat(forBus: 0) // Formato corretto
+        let recordingFormat = inputNode.inputFormat(forBus: 0) // Correct audio format
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
             recognitionRequest.append(buffer)
         }
@@ -111,7 +109,6 @@ final class SpeechRecognizerCoordinator: NSObject, ObservableObject {
         case requestInitializationFailed
     }
 }
-
 
 #Preview {
     SpeechRecognizerView(onTranscriptionResult: { result in

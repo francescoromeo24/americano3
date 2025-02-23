@@ -8,6 +8,7 @@ import SwiftUI
 
 struct BrailleAlphabetView: View {
     
+    // Enum to define the different types of alphabets
     enum AlphabetType: String, CaseIterable {
         case lowercase = "Lowercase"
         case uppercase = "Uppercase"
@@ -17,7 +18,7 @@ struct BrailleAlphabetView: View {
     
     @State private var selectedType: AlphabetType = .lowercase
 
-    // Braille dictionary
+    // Braille dictionary mapping characters to their respective Braille patterns
     let brailleDictionary: [Character: [Bool]] = [
         // Lowercase letters
         "a": [true, false, false, false, false, false],
@@ -47,7 +48,7 @@ struct BrailleAlphabetView: View {
         "y": [true, false, true, true, true, true],
         "z": [true, false, false, true, true, true],
         
-        // Uppercase letters (prefix ⠠)
+        // Uppercase letters (prefixed with ⠠)
         "A": [true, false, false, false, false, true],
         "B": [true, true, false, false, false, true],
         "C": [true, false, true, false, false, true],
@@ -58,23 +59,7 @@ struct BrailleAlphabetView: View {
         "H": [true, true, false, true, false, true],
         "I": [false, true, true, false, false, true],
         "J": [false, true, true, true, false, true],
-        "K": [true, false, false, false, true, true],
-        "L": [true, true, false, false, true, true],
-        "M": [true, false, true, false, true, true],
-        "N": [true, false, true, true, true, true],
-        "O": [true, false, false, true, true, true],
-        "P": [true, true, true, false, true, true],
-        "Q": [true, true, true, true, true, true],
-        "R": [true, true, false, true, true, true],
-        "S": [false, true, true, false, true, true],
-        "T": [false, true, true, true, true, true],
-        "U": [true, false, false, false, true, true],
-        "V": [true, true, false, false, true, true],
-        "W": [false, true, true, true, false, true],
-        "X": [true, false, true, false, true, true],
-        "Y": [true, false, true, true, true, true],
-        "Z": [true, false, false, true, true, true],
-        
+
         // Numbers (preceded by numeric prefix ⠼)
         "1": [true, false, false, false, false, false],
         "2": [true, true, false, false, false, false],
@@ -88,28 +73,33 @@ struct BrailleAlphabetView: View {
         "0": [false, true, true, true, false, false],
 
         // Punctuation
-        ".": [true, false, false, true, true, false], // Period
-        ",": [true, false, false, false, false, false], // Comma
-        ";": [true, true, true, false, true, true], // Semicolon
-        ":": [true, false, false, false, true, true], // Colon
-        "?": [false, true, true, true, true, true], // Question mark
-        "!": [true, true, true, true, false, true], // Exclamation mark
-        
+            ".": [true, false, false, true, true, false], // Period
+            ",": [true, false, false, false, false, false], // Comma
+            ";": [true, false, false, false, true, false], // Semicolon
+            ":": [true, false, true, false, true, false], // Colon
+            "?": [false, true, false, true, false, false], // Question mark
+            "!": [false, true, true, false, false, false], // Exclamation mark
+            "(": [false, false, true, true, false, false], // Open parenthesis
+            ")": [false, false, false, true, false, true], // Close parenthesis
+            "\"": [true, false, false, true, false, true], // Quotation marks
+            "'": [true, true, false, false, true, false], // Apostrophe
+
         // Special symbols
-        "+": [true, true, true, true, false, false], // Addition
-        "-": [true, true, false, false, true, true], // Subtraction
-        "*": [true, false, false, false, true, true], // Multiplication
-        "/": [false, true, true, false, true, false], // Division
-        "=": [false, false, true, true, true, false], // Equals
-        "@": [false, true, false, false, true, false], // At symbol
-        "#": [false, false, false, true, true, true], // Number sign
-        "&": [true, false, true, true, false, false], // Ampersand
-        "%": [false, true, false, true, true, true], // Percent
-        "$": [false, false, true, false, true, true], // Dollar
-        "€": [false, true, true, false, false, true]  // Euro
+            "+": [true, true, true, true, false, false], // Addition
+            "-": [true, true, false, false, true, true], // Subtraction
+            "*": [true, false, false, false, true, true], // Multiplication
+            "/": [false, true, true, false, true, false], // Division
+            "=": [true, false, false, false, true, true], // Equals
+            "@": [false, true, false, true, false, true], // At symbol
+            "#": [true, false, true, false, true, true], // Number sign
+            "&": [false, true, true, false, true, false], // Ampersand
+            "%": [false, true, false, true, true, false], // Percent
+            "$": [true, true, false, true, false, true], // Dollar
+            "€": [false, false, true, false, true, true], // Euro
+
     ]
 
-    //Filtering and ordering alphabet in order to selection
+    // Function to filter and sort the alphabet based on the selected type
     func filteredAlphabet() -> [(label: String, pattern: [Bool])] {
         switch selectedType {
         case .lowercase:
@@ -128,7 +118,7 @@ struct BrailleAlphabetView: View {
                 .sorted()
                 .map { (String($0), brailleDictionary[$0]!) }
         case .specialChars:
-            //separating punctuation from special signs (except for numbers and letters)
+            // Separating punctuation from other special symbols
             let punctuation: [(String, [Bool])] = brailleDictionary.keys
                 .filter { ",.?!;:()\"'".contains($0) }
                 .sorted()
@@ -147,7 +137,7 @@ struct BrailleAlphabetView: View {
         NavigationStack {
             ScrollView {
                 VStack {
-                    // Segmented control per selezionare il tipo di caratteri
+                    // Picker to select the alphabet type
                     Picker("Select Alphabet Type", selection: $selectedType) {
                         ForEach(AlphabetType.allCases, id: \.self) { type in
                             Text(type.rawValue).tag(type)
@@ -156,7 +146,7 @@ struct BrailleAlphabetView: View {
                     .pickerStyle(SegmentedPickerStyle())
                     .padding()
 
-                    // Mostra l'alfabeto filtrato e ordinato
+                    // Displaying the filtered and sorted Braille alphabet
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 4), spacing: 30) {
                         ForEach(filteredAlphabet(), id: \.label) { item in
                             VStack(spacing: 10) {
@@ -180,6 +170,7 @@ struct BrailleAlphabetView: View {
     }
 }
 
+// View to display the Braille pattern for each character
 struct BraillePatternView: View {
     let pattern: [Bool]
     let label: String
@@ -198,6 +189,7 @@ struct BraillePatternView: View {
     }
 }
 
+// Preview for SwiftUI live rendering
 struct BrailleAlphabetView_Previews: PreviewProvider {
     static var previews: some View {
         BrailleAlphabetView()

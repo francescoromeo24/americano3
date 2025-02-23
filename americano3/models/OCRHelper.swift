@@ -19,6 +19,7 @@ func performOCR(on image: UIImage, completion: @escaping (String?, Bool, Bool) -
     // Create a text recognition request
     let request = VNRecognizeTextRequest { (request, error) in
         guard error == nil else {
+            print("OCR Error: \(error?.localizedDescription ?? "Unknown error")")
             completion(nil, false, false) // Error during text recognition
             return
         }
@@ -30,9 +31,15 @@ func performOCR(on image: UIImage, completion: @escaping (String?, Bool, Bool) -
 
         // If text is found, check if it contains Braille patterns
         if let text = recognizedStrings?.joined(separator: " "), !text.isEmpty {
-            let isBraille = text.contains("⠁") || text.contains("⠃") || text.contains("⠉") // Basic Braille detection
-            completion(text, true, isBraille)
+            print("OCR recognized text: \(text)")
+            
+            // Basic Braille detection: check for more patterns
+            let brailleDetected = text.contains("⠁") || text.contains("⠃") || text.contains("⠉") ||
+                                  text.contains("⠙") || text.contains("⠑") || text.contains("⠋")
+            
+            completion(text, true, brailleDetected)
         } else {
+            print("No text recognized")
             completion(nil, false, false) // No recognizable text found
         }
     }
@@ -45,8 +52,8 @@ func performOCR(on image: UIImage, completion: @escaping (String?, Bool, Bool) -
         do {
             try handler.perform([request])
         } catch {
+            print("OCR failed: \(error.localizedDescription)")
             completion(nil, false, false) // Error while performing the OCR request
         }
     }
 }
-
