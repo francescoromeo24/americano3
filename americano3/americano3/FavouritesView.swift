@@ -10,24 +10,28 @@ import UIKit
 struct FavoritesView: View {
     @Binding var flashcards: [Flashcard]
     
+    // Define a two-column grid layout
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
     
+    // Filter and sort starred flashcards based on the date added (newest first)
     var starredFlashcards: [Flashcard] {
         flashcards.filter { $0.isStarred }
-            .sorted{$0.dateAdded > $1.dateAdded}
+            .sorted { $0.dateAdded > $1.dateAdded }
     }
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 16) {
+                    // Loop through starred flashcards and create navigation links for each
                     ForEach(starredFlashcards, id: \.id) { flashcard in
                         NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)) {
                             VStack {
                                 VStack(alignment: .leading) {
+                                    // Display word with accessibility support
                                     Text(flashcard.word.isEmpty ? "Word" : flashcard.word)
                                         .font(.headline)
                                         .fontWeight(.bold)
@@ -35,6 +39,7 @@ struct FavoritesView: View {
                                         .accessibilityLabel(flashcard.word.isEmpty ? "Word" : flashcard.word)
                                         .accessibilityHint("This is the word in the flashcard.")
                                     
+                                    // Display translation with accessibility support
                                     Text(flashcard.translation.isEmpty ? "Translation" : flashcard.translation)
                                         .font(.headline)
                                         .foregroundColor(.gray)
@@ -46,9 +51,10 @@ struct FavoritesView: View {
                                 
                                 HStack {
                                     Spacer()
+                                    // Star button to toggle favorite status
                                     Button(action: {
                                         toggleFlashcardStar(for: flashcard)
-                                        triggerHapticFeedback() // Trigger haptic feedback
+                                        triggerHapticFeedback() // Trigger haptic feedback on action
                                     }) {
                                         Image(systemName: "star.fill")
                                             .foregroundColor(.blue)
@@ -61,11 +67,14 @@ struct FavoritesView: View {
                                 }
                                 
                             }
-                            .frame(width: 146, height: 164)
+                            .frame(
+                                width: UIDevice.current.userInterfaceIdiom == .pad ? 200 : 146,
+                                height: UIDevice.current.userInterfaceIdiom == .pad ? 220 : 164
+                            )
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
                                     .fill(Color.white)
-                                    .stroke(Color.blue, lineWidth:1)
+                                    .stroke(Color.blue, lineWidth: 1)
                                     .shadow(radius: 2)
                             )
                             .accessibilityElement(children: .contain)
@@ -75,17 +84,19 @@ struct FavoritesView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Favorites")
-            .background(Color("Background"))
+            .navigationTitle("Favorites") // Set navigation title
+            .background(Color("Background")) // Use app-defined background color
         }
     }
     
+    // Function to toggle the "starred" status of a flashcard
     func toggleFlashcardStar(for flashcard: Flashcard) {
         if let index = flashcards.firstIndex(where: { $0.id == flashcard.id }) {
             flashcards[index].isStarred.toggle()
         }
     }
     
+    // Function to trigger haptic feedback when an action is performed
     func triggerHapticFeedback() {
         let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
         impactFeedback.prepare()
@@ -93,10 +104,10 @@ struct FavoritesView: View {
     }
 }
 
+// Preview provider to display sample flashcards
 #Preview {
     FavoritesView(flashcards: .constant([
-        Flashcard( word: "", translation: "", isStarred: true, dateAdded: Date()),
+        Flashcard(word: "", translation: "", isStarred: true, dateAdded: Date()),
         Flashcard(word: "", translation: "", isStarred: true, dateAdded: Date())
     ]))
 }
-

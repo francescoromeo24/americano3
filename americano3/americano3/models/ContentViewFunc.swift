@@ -7,42 +7,50 @@
 import SwiftUI
 import AVFoundation
 
+// ViewModel class handling translation logic and app state
 class ContentViewFunc: ObservableObject {
 
-    @Published var textInput = ""
-    @Published var brailleOutput = ""
-    @Published var isTextToBraille = true
-    @Published var flashcardManager = FlashcardManager()
-    @Published var isCameraPresented = false
-    @Published var showingFavorites = false
-    @Published var selectedImage: UIImage?
-    @Published var flashcardToDelete: Flashcard?
-    @Published var showingDeleteConfirmation = false
-    @Published var isBraille = false
+    @Published var textInput = "" // Stores user input text
+    @Published var brailleOutput = "" // Stores translated Braille output
+    @Published var isTextToBraille = true // Determines translation direction
+    @Published var flashcardManager = FlashcardManager() // Manages flashcards
+    @Published var isCameraPresented = false // Tracks camera view presentation
+    @Published var showingFavorites = false // Tracks favorites view state
+    @Published var selectedImage: UIImage? // Holds selected image for OCR
+    @Published var flashcardToDelete: Flashcard? // Stores flashcard to be deleted
+    @Published var showingDeleteConfirmation = false // Controls delete confirmation dialog
+    @Published var isBraille = false // Tracks if input is Braille
 
     @Published var selectedText: String? {
         didSet {
             if let text = selectedText {
-                textInput = text
-                updateTranslation()
+                DispatchQueue.main.async {
+                    self.selectedText = nil  // Temporarily resets selection
+                    self.textInput = text
+                    self.updateTranslation()
+                }
             }
         }
     }
 
-    @Published var translatedBraille: String?
+    @Published var translatedBraille: String? // Holds translated Braille
 
+    // Updates translation based on user input
     func updateTranslation() {
-        if isTextToBraille {
-            let newBraille = Translate.translateToBraille(text: textInput)
-            giveHapticFeedbackForEachLetter(oldText: brailleOutput, newText: newBraille)
-            brailleOutput = newBraille
-        } else {
-            let newText = Translate.translateToText(braille: brailleOutput)
-            giveHapticFeedbackForEachLetter(oldText: textInput, newText: newText)
-            textInput = newText
+        DispatchQueue.main.async {
+            if self.isTextToBraille {
+                let newBraille = Translate.translateToBraille(text: self.textInput)
+                self.giveHapticFeedbackForEachLetter(oldText: self.brailleOutput, newText: newBraille)
+                self.brailleOutput = newBraille
+            } else {
+                let newText = Translate.translateToText(braille: self.brailleOutput)
+                self.giveHapticFeedbackForEachLetter(oldText: self.textInput, newText: newText)
+                self.textInput = newText
+            }
         }
     }
 
+    // Swaps translation mode and updates output accordingly
     func swapTranslation() {
         isTextToBraille.toggle()
         let temp = textInput
@@ -52,6 +60,7 @@ class ContentViewFunc: ObservableObject {
         UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
     }
 
+    // Adds a new flashcard
     func addFlashcard() {
         if !textInput.isEmpty {
             flashcardManager.addFlashcard(textInput: textInput, brailleOutput: brailleOutput)
@@ -61,12 +70,14 @@ class ContentViewFunc: ObservableObject {
         }
     }
 
+    // Updates an existing flashcard
     func updateFlashcard(_ updatedFlashcard: Flashcard) {
         if let index = flashcardManager.flashcards.firstIndex(where: { $0.id == updatedFlashcard.id }) {
             flashcardManager.flashcards[index] = updatedFlashcard
         }
     }
 
+    // Deletes a selected flashcard
     func deleteFlashcard() {
         if let flashcard = flashcardToDelete {
             flashcardManager.flashcards.removeAll { $0.id == flashcard.id }
@@ -74,6 +85,7 @@ class ContentViewFunc: ObservableObject {
         }
     }
 
+    // Provides haptic feedback for each new character added
     func giveHapticFeedbackForEachLetter(oldText: String, newText: String) {
         guard oldText != newText else { return }
 
@@ -85,51 +97,48 @@ class ContentViewFunc: ObservableObject {
         }
     }
 
-    // Funzione che verifica se il testo è Braille (Unicode)
+    // Checks if the provided text is in Braille Unicode range
     func isBraille(text: String) -> Bool {
-        // Range dei caratteri Braille Unicode
         let brailleCharacterRange = "\u{2800}"..."\u{28FF}"
-        // Verifica se ogni carattere è nel range Braille
         return text.allSatisfy { brailleCharacterRange.contains(String($0)) }
     }
 
-    func processImage(_ image: UIImage) {
-        // Chiamata alla funzione performOCR per eseguire il riconoscimento del testo
-        performOCR(on: image) { (recognizedText, success) in
+    // Processes an image and extracts text using OCR
+    func processImage(_ image: UIImage?) {
+        guard let validImage = image else {
+            print("❌ Error: Nil image in processImage")
+            return
+        }
+
+        performOCR(on: validImage) { (recognizedText, success, isBrailleDetected) in
             DispatchQueue.main.async {
                 if let result = recognizedText {
-                    if self.isBraille {
-                        // Se il testo è Braille, traducilo in testo
-                        self.textInput = Translate.translateToText(braille: result)
-                        self.brailleOutput = result
-                        print("🔹 Braille riconosciuto, tradotto in testo: \(self.textInput)")
+                    if self.isBraille || isBrailleDetected {
+                        self.selectedText = Translate.translateToText(braille: result)
+                        self.translatedBraille = result
                     } else {
-                        // Se il testo è normale, traducilo in Braille
-                        self.textInput = result
-                        self.brailleOutput = Translate.translateToBraille(text: result)
-                        print("🔹 Testo normale, tradotto in Braille: \(self.brailleOutput)")
+                        self.selectedText = result
+                        self.translatedBraille = Translate.translateToBraille(text: result)
                     }
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 } else {
-                    self.textInput = "Nessun testo riconosciuto"
-                    self.brailleOutput = " "
+                    self.selectedText = "No text recognized"
+                    self.translatedBraille = " "
                 }
             }
         }
     }
 
-
-
-
-
+    // Returns appropriate placeholder text based on translation mode
     func placeholderText() -> String {
         return isTextToBraille ? "Enter text" : "⠑⠝⠞⠑⠗ ⠃⠗⠁⠊⠇⠇⠑"
     }
 
+    // Hides keyboard
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     
+    // Handles file import and extracts text content
     func handleFileImport(result: Result<[URL], Error>) {
         switch result {
         case .success(let urls):
@@ -147,36 +156,31 @@ class ContentViewFunc: ObservableObject {
                 }
                 
                 guard let content = fileContent else {
-                    print("❌ Errore: impossibile decodificare il file.")
-                    UIAccessibility.post(notification: .announcement, argument: "Errore nella lettura del file.")
+                    print("❌ Error: Unable to decode file.")
+                    UIAccessibility.post(notification: .announcement, argument: "Error reading file.")
                     return
                 }
                 
                 DispatchQueue.main.async {
-                    print("✅ Contenuto file importato: \(content)") // Debug
+                    print("✅ Imported file content: \(content)") // Debug
                     
-                    // Controlla se il contenuto del file è Braille o testo
                     if self.isBraille(text: content) {
                         self.selectedText = Translate.translateToText(braille: content)
                         self.translatedBraille = content
-                        print("🔹 Braille rilevato, tradotto in testo: \(self.selectedText ?? "")") // Debug
                     } else {
                         self.selectedText = content
                         self.translatedBraille = Translate.translateToBraille(text: content)
-                        print("🔹 Testo normale, tradotto in Braille: \(self.translatedBraille ?? "")") // Debug
                     }
                     
-                    // ⚠️ Annuncia il risultato tramite accessibilità
-                    UIAccessibility.post(notification: .announcement, argument: "File importato con successo.")
+                    UIAccessibility.post(notification: .announcement, argument: "File imported successfully.")
                 }
             } catch {
-                print("❌ Errore nella lettura del file: \(error.localizedDescription)")
-                UIAccessibility.post(notification: .announcement, argument: "Errore nell'importazione del file.")
+                print("❌ Error reading file: \(error.localizedDescription)")
+                UIAccessibility.post(notification: .announcement, argument: "Error importing file.")
             }
-            
         case .failure(let error):
-            print("❌ Errore durante l'importazione: \(error.localizedDescription)")
-            UIAccessibility.post(notification: .announcement, argument: "Errore nell'importazione del file.")
+            print("❌ Error importing: \(error.localizedDescription)")
+            UIAccessibility.post(notification: .announcement, argument: "Error importing file.")
         }
     }
 }

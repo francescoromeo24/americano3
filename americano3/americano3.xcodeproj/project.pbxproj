@@ -6,7 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		53335AB02D5F475800CC38DE /* BrailleDatabase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 53335AAE2D5F475800CC38DE /* BrailleDatabase.xcdatamodeld */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		53335AAF2D5F475800CC38DE /* BrailleDatabase.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BrailleDatabase.xcdatamodel; sourceTree = "<group>"; };
 		537C4D2B2D287BFE0016191A /* americano3.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = americano3.xcodeproj; sourceTree = "<group>"; };
 		5385D1B72D0835F10068D791 /* americano3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = americano3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -40,6 +45,7 @@
 		5385D1AE2D0835F10068D791 = {
 			isa = PBXGroup;
 			children = (
+				53335AAE2D5F475800CC38DE /* BrailleDatabase.xcdatamodeld */,
 				5385D1B92D0835F10068D791 /* americano3 */,
 				5385D1B82D0835F10068D791 /* Products */,
 			);
@@ -133,6 +139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53335AB02D5F475800CC38DE /* BrailleDatabase.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +363,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		53335AAE2D5F475800CC38DE /* BrailleDatabase.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				53335AAF2D5F475800CC38DE /* BrailleDatabase.xcdatamodel */,
+			);
+			currentVersion = 53335AAF2D5F475800CC38DE /* BrailleDatabase.xcdatamodel */;
+			path = BrailleDatabase.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 5385D1AF2D0835F10068D791 /* Project object */;
 }

@@ -18,10 +18,10 @@ struct FlashcardDetailView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.leading)
-                    .accessibilityLabel(flashcard.word) // VoiceOver legge il testo originale
+                    .accessibilityLabel(flashcard.word) 
                     .padding(.horizontal)
 
-                // Traduzione Braille organizzata su più righe
+                // Braille translation
                 let brailleWords = flashcard.translation.split(separator: " ").map(String.init)
                 let originalWords = flashcard.word.split(separator: " ").map(String.init)
 
@@ -37,7 +37,7 @@ struct FlashcardDetailView: View {
                             .background(Color.white)
                             .cornerRadius(8)
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.blue, lineWidth: 1))
-                            .accessibilityLabel(originalWord) // VoiceOver leggerà la parola originale
+                            .accessibilityLabel(originalWord) // VoiceOver reads original world
                             .accessibilityHint("Double tap to hear the word")
                             .onTapGesture {
                                 print("Tapped word: \(originalWord)")
@@ -55,14 +55,14 @@ struct FlashcardDetailView: View {
         .background(Color("Background"))
     }
 
-    // Feedback tattile
+    // Haptic feedback
     func giveHapticFeedback() {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
     }
 }
 
-// Anteprima
+// Preview
 struct FlashcardDetailView_Previews: PreviewProvider {
     static var previews: some View {
         FlashcardDetailView(flashcard: Flashcard(word: "Hello world", translation: "⠓⠑⠇⠇⠕ ⠺⠕⠗⠇⠙", dateAdded: Date()))
