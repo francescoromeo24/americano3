@@ -1,0 +1,76 @@
+/* 
+  Localizable.strings
+  americano3
+
+  Created by Francesco Romeo on 29/03/25.
+  
+*/
+"braille_alphabet" = "Braille-Alphabet";
+"translate" = "Übersetzen";
+"lowercase" = "Kleinbuchstaben";
+"uppercase" = "Großbuchstaben";
+"numbers" = "Zahlen";
+"specialchars" = "Sonderzeichen";
+
+"text" = "Text";
+"braille" = "Braille";
+"enter_text_hint" = "Text zum Übersetzen eingeben";
+"translation" = "Übersetzung";
+"swipe_to_hear" = "Wischen Sie, um Buchstabe für Buchstabe zu hören";
+"history" = "Verlauf";
+"view_favorites" = "Favoriten anzeigen";
+"delete_flashcard_title" = "Flashcard löschen?";
+"cancel" = "Abbrechen";
+"delete" = "Löschen";
+"delete_flashcard_message" = "Sind Sie sicher, dass Sie diese Flashcard löschen möchten?";
+"word" = "Wort";
+"word_flashcard_hint" = "Dies ist das Wort in der Flashcard";
+"translation_flashcard_hint" = "Dies ist die Übersetzung des Wortes";
+"toggle_star_hint" = "Tippen Sie, um als Favorit zu markieren oder zu entfernen";
+"favorites" = "Favoriten";
+"word" = "Wort";
+"translation" = "Übersetzung";
+"flashcard" = "Flashcard";
+"double_tap_hint" = "Doppeltippen um das Wort zu hören";
+"details" = "Details";
+"flashcard_details_hint" = "Flashcard-Details";
+"translation_flashcard_hint" = "Dies ist die Übersetzung in der Flashcard";
+
+"import_attach_files" = "Dateien anhängen";
+"import_attach_photos" = "Fotos anhängen";
+"import_file_hint" = "Öffnet den Dateiauswahldialog";
+"import_photo_hint" = "Öffnet die Fotobibliothek";
+"import_options_label" = "Importoptionen";
+"import_options_hint" = "Tippen Sie, um zwischen dem Anhängen einer Datei oder eines Fotos zu wählen";
+"import_success" = "Datei erfolgreich importiert";
+"import_failure" = "Import der Datei fehlgeschlagen";
+"import_error" = "Fehler beim Import";
+"photo_import_success" = "Foto erfolgreich importiert";
+"text_recognition_failure" = "Texterkennung fehlgeschlagen";
+"text_recognition_success" = "Text erfolgreich erkannt";
+"photo_selection_cancelled" = "Fotowahl abgebrochen";
+"photo_selected_success" = "Foto erfolgreich ausgewählt";
+
+"settings_title" = "Einstellungen";
+"settings_app_permissions" = "APP-BERECHTIGUNGEN FESTLEGEN";
+"settings_permissions" = "App-Berechtigungen";
+"settings_feedback_section" = "FEEDBACK GEBEN";
+"settings_feedback" = "Feedback";
+"settings_privacy_section" = "DATENSCHUTZERKLÄRUNG LESEN";
+"settings_privacy_policy" = "Datenschutzerklärung";
+"settings_close" = "Einstellungen schließen";
+"settings_button" = "Einstellungen öffnen";
+
+"question_mark" = "Fragezeichen";
+"exclamation_mark" = "Ausrufezeichen";
+"period" = "Punkt";
+"comma" = "Komma";
+"semicolon" = "Semikolon";
+"colon" = "Doppelpunkt";
+"open_parenthesis" = "öffnende Klammer";
+"close_parenthesis" = "schließende Klammer";
+"quotation_mark" = "Anführungszeichen";
+"apostrophe" = "Apostroph";
+
+"text_label" = "Text";
+"braille_label" = "Braille";

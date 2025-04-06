@@ -1,0 +1,71 @@
+/* 
+  Localizable.strings
+  americano3
+
+  Created by Francesco Romeo on 29/03/25.
+  
+*/
+"braille_alphabet" = "Alfabeto Braille";
+"translate" = "Traduci";
+"lowercase" = "Minuscole";
+"uppercase" = "Maiuscole";
+"numbers" = "Numeri";
+"specialchars" = "Caratteri Speciali";
+"text" = "Testo";
+"braille" = "Braille";
+"enter_text_hint" = "Inserisci il testo da tradurre";
+"translation" = "Traduzione";
+"swipe_to_hear" = "Scorri per ascoltare lettera per lettera";
+"history" = "Cronologia";
+"view_favorites" = "Visualizza Preferiti";
+"delete_flashcard_title" = "Eliminare la flashcard?";
+"cancel" = "Annulla";
+"delete" = "Elimina";
+"delete_flashcard_message" = "Sei sicuro di voler eliminare questa flashcard?";
+
+"double_tap_hint" = "Doppio tap per ascoltare la parola";
+"details" = "Dettagli";
+"flashcard_details_hint" = "Dettagli flashcard";
+
+"word_flashcard_hint" = "Questa è la parola nella flashcard";
+"translation_flashcard_hint" = "Questa è la traduzione della parola";
+"toggle_star_hint" = "Tocca per aggiungere o rimuovere dai preferiti";
+"favorites" = "Preferiti";
+
+"import_attach_files" = "Allega File";
+"import_attach_photos" = "Allega Foto";
+"import_file_hint" = "Apre il selettore file";
+"import_photo_hint" = "Apre la libreria foto";
+"import_options_label" = "Opzioni importazione";
+"import_options_hint" = "Tocca per scegliere tra allegare un file o una foto";
+"import_success" = "File importato con successo";
+"import_failure" = "Importazione file fallita";
+"import_error" = "Errore durante l'importazione";
+"photo_import_success" = "Foto importata con successo";
+"text_recognition_failure" = "Riconoscimento testo fallito";
+"text_recognition_success" = "Testo riconosciuto con successo";
+"photo_selection_cancelled" = "Selezione foto annullata";
+"photo_selected_success" = "Foto selezionata con successo";
+"settings_title" = "Impostazioni";
+"settings_app_permissions" = "IMPOSTA PERMESSI APP";
+"settings_permissions" = "Permessi app";
+"settings_feedback_section" = "INVIA IL TUO FEEDBACK";
+"settings_feedback" = "Feedback";
+"settings_privacy_section" = "LEGGI LA PRIVACY POLICY";
+"settings_privacy_policy" = "Privacy policy";
+"settings_close" = "Chiudi impostazioni";
+"settings_button" = "Apri Impostazioni";
+
+"question_mark" = "punto interrogativo";
+"exclamation_mark" = "punto esclamativo";
+"period" = "punto";
+"comma" = "virgola";
+"semicolon" = "punto e virgola";
+"colon" = "due punti";
+"open_parenthesis" = "parentesi aperta";
+"close_parenthesis" = "parentesi chiusa";
+"quotation_mark" = "virgolette";
+"apostrophe" = "apostrofo";
+
+"text_label" = "Testo";
+"braille_label" = "Braille";

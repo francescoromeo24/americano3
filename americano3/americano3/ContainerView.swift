@@ -8,27 +8,32 @@
 import SwiftUI
 
 struct ContainerView: View {
-    init() {
-          // Color icons and text
-        UITabBar.appearance().unselectedItemTintColor = UIColor.systemBlue
-        UITabBar.appearance().tintColor = UIColor.blue
-      }
     var body: some View {
         TabView {
             ContentView()
                 .tabItem {
-                    Label("Translate", systemImage: "translate")
+                    Label(LocalizedStringKey("translate"), systemImage: "translate")
                 }
             
             BrailleAlphabetView()
                 .tabItem {
-                    Label("Braille Alphabet", systemImage: "textformat.characters.dottedunderline")
+                    Label(LocalizedStringKey("braille_alphabet"), systemImage: "textformat.characters.dottedunderline")
                 }
         }
+        .accentColor(.blue)
+        .background(Color("Background"))
     }
-    
 }
 
 #Preview {
-    ContainerView()
+    Group {
+        ContainerView()
+            .preferredColorScheme(.light)
+        
+        ContainerView()
+            .preferredColorScheme(.dark)
+        
+        ContainerView()
+            .environment(\.sizeCategory, .accessibilityExtraExtraLarge)
+    }
 }

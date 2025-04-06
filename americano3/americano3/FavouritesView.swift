@@ -33,19 +33,21 @@ struct FavoritesView: View {
                                 VStack(alignment: .leading) {
                                     // Display word with accessibility support
                                     Text(flashcard.word.isEmpty ? "Word" : flashcard.word)
+                                        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                         .font(.headline)
                                         .fontWeight(.bold)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.gray)
                                         .accessibilityLabel(flashcard.word.isEmpty ? "Word" : flashcard.word)
-                                        .accessibilityHint("This is the word in the flashcard.")
+                                        .accessibilityHint(LocalizedStringKey("word_flashcard_hint"))
                                     
                                     // Display translation with accessibility support
                                     Text(flashcard.translation.isEmpty ? "Translation" : flashcard.translation)
+                                        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                         .font(.headline)
                                         .foregroundColor(.gray)
                                         .padding(.top, 2)
                                         .accessibilityLabel(flashcard.word.isEmpty ? "Translation" : flashcard.word)
-                                        .accessibilityHint("This is the translation of the word.")
+                                        .accessibilityHint(LocalizedStringKey("translation_flashcard_hint"))
                                 }
                                 .padding()
                                 
@@ -57,6 +59,7 @@ struct FavoritesView: View {
                                         triggerHapticFeedback() // Trigger haptic feedback on action
                                     }) {
                                         Image(systemName: "star.fill")
+                                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                             .foregroundColor(.blue)
                                             .font(.title)
                                     }
@@ -84,7 +87,8 @@ struct FavoritesView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Favorites") // Set navigation title
+            .navigationTitle(LocalizedStringKey("favorites"))
+            .dynamicTypeSize(..<DynamicTypeSize.large)
             .background(Color("Background")) // Use app-defined background color
         }
     }

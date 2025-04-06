@@ -1,0 +1,77 @@
+/* 
+  Localizable.strings
+  americano3
+
+  Created by Francesco Romeo on 29/03/25.
+  
+*/
+"braille_alphabet" = "Alphabet Braille";
+"translate" = "Traduire";
+"braille_alphabet" = "Alphabet Braille";
+"lowercase" = "Minuscules";
+"uppercase" = "Majuscules";
+"numbers" = "Nombres";
+"specialchars" = "Caractères Spéciaux";
+
+"text" = "Texte";
+"braille" = "Braille";
+"enter_text_hint" = "Entrez le texte à traduire";
+"translation" = "Traduction";
+"swipe_to_hear" = "Balayez pour écouter lettre par lettre";
+"history" = "Historique";
+"view_favorites" = "Voir les Favoris";
+"delete_flashcard_title" = "Supprimer la flashcard ?";
+"cancel" = "Annuler";
+"delete" = "Supprimer";
+"delete_flashcard_message" = "Êtes-vous sûr de vouloir supprimer cette flashcard ?";
+
+"double_tap_hint" = "Appuyez deux fois pour entendre le mot";
+"details" = "Détails";
+"flashcard_details_hint" = "Détails de la flashcard";
+
+"word_flashcard_hint" = "C'est le mot dans la flashcard";
+"translation_flashcard_hint" = "C'est la traduction du mot";
+"toggle_star_hint" = "Appuyez pour marquer ou démarquer comme favori";
+"favorites" = "Favoris";
+"word" = "Mot";
+"translation" = "Traduction";
+"flashcard" = "Flashcard";
+
+"import_attach_files" = "Joindre des fichiers";
+"import_attach_photos" = "Joindre des photos";
+"import_file_hint" = "Ouvre le sélecteur de fichiers";
+"import_photo_hint" = "Ouvre la bibliothèque de photos";
+"import_options_label" = "Options d'importation";
+"import_options_hint" = "Appuyez pour choisir entre joindre un fichier ou une photo";
+"import_success" = "Fichier importé avec succès";
+"import_failure" = "Échec de l'importation du fichier";
+"import_error" = "Erreur lors de l'importation";
+"photo_import_success" = "Photo importée avec succès";
+"text_recognition_failure" = "Reconnaissance de texte échouée";
+"text_recognition_success" = "Texte reconnu avec succès";
+"photo_selection_cancelled" = "Sélection de photo annulée";
+"photo_selected_success" = "Photo sélectionnée avec succès";
+
+"settings_title" = "Paramètres";
+"settings_app_permissions" = "DÉFINIR LES AUTORISATIONS";
+"settings_permissions" = "Autorisations de l'app";
+"settings_feedback_section" = "DONNEZ VOTRE AVIS";
+"settings_feedback" = "Retour d'information";
+"settings_privacy_section" = "LIRE LA POLITIQUE DE CONFIDENTIALITÉ";
+"settings_privacy_policy" = "Politique de confidentialité";
+"settings_close" = "Fermer les paramètres";
+"settings_button" = "Ouvrir les Paramètres";
+
+"question_mark" = "point d'interrogation";
+"exclamation_mark" = "point d'exclamation";
+"period" = "point";
+"comma" = "virgule";
+"semicolon" = "point-virgule";
+"colon" = "deux-points";
+"open_parenthesis" = "parenthèse ouvrante";
+"close_parenthesis" = "parenthèse fermante";
+"quotation_mark" = "guillemets";
+"apostrophe" = "apostrophe";
+
+"text_label" = "Texte";
+"braille_label" = "Braille";

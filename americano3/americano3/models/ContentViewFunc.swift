@@ -43,9 +43,9 @@ class ContentViewFunc: ObservableObject {
                 self.giveHapticFeedbackForEachLetter(oldText: self.brailleOutput, newText: newBraille)
                 self.brailleOutput = newBraille
             } else {
-                let newText = Translate.translateToText(braille: self.brailleOutput)
-                self.giveHapticFeedbackForEachLetter(oldText: self.textInput, newText: newText)
-                self.textInput = newText
+                let newText = Translate.translateToText(braille: self.textInput)
+                self.giveHapticFeedbackForEachLetter(oldText: self.brailleOutput, newText: newText)
+                self.brailleOutput = newText
             }
         }
     }
@@ -183,4 +183,61 @@ class ContentViewFunc: ObservableObject {
             UIAccessibility.post(notification: .announcement, argument: "Error importing file.")
         }
     }
-}
+    
+    @Published var isBrailleKeyboardActive = false
+    let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+    let supportedLanguages = ["en", "it", "fr", "es", "de"]
+    
+    func activateBrailleKeyboard() {
+        isBrailleKeyboardActive = true
+        feedbackGenerator.prepare()
+        feedbackGenerator.impactOccurred()
+        
+        // Check if Braille keyboard is available
+        if let keyboards = UserDefaults.standard.object(forKey: "AppleKeyboards") as? [String],
+           keyboards.contains("com.apple.BrailleIM") {
+            UIAccessibility.post(notification: .announcement, argument: NSLocalizedString("braille_keyboard_ready", comment: ""))
+        } else {
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        }
+    }
+        
+        func speakTranslation(with synthesizer: AVSpeechSynthesizer, in language: String) {
+            let textToSpeak = isTextToBraille ? textInput : brailleOutput
+            let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+            
+            feedbackGenerator.impactOccurred()
+            
+            // Get device language (first 2 characters)
+            let deviceLanguage = Locale.current.language.languageCode?.identifier ?? "en"
+            
+            // Supported languages with fallback
+            let supportedLanguages = ["en", "it", "es", "fr", "de"]
+            let languageToUse = supportedLanguages.contains(deviceLanguage) ? deviceLanguage : "en"
+            
+            guard let voice = AVSpeechSynthesisVoice(language: languageToUse) else {
+                // Fallback to English if voice not available
+                if let defaultVoice = AVSpeechSynthesisVoice(language: "en") {
+                    let utterance = AVSpeechUtterance(string: textToSpeak)
+                    utterance.rate = 0.5
+                    utterance.pitchMultiplier = 1.0
+                    utterance.volume = 1.0
+                    utterance.voice = defaultVoice
+                    synthesizer.speak(utterance)
+                }
+                return
+            }
+            
+            let utterance = AVSpeechUtterance(string: textToSpeak)
+            utterance.rate = 0.5
+            utterance.pitchMultiplier = 1.0
+            utterance.volume = 1.0
+            utterance.voice = voice
+            
+            synthesizer.speak(utterance)
+        }
+        // ... rest of existing functions ...
+    }
+
