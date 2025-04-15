@@ -26,18 +26,6 @@ struct SettingsView: View {
                     })
                 }
                 
-                Section(header: Text(LocalizedStringKey("settings_feedback_section"))) {
-                    NavigationLink(destination: EmptyView()) {
-                        Label {
-                            Text(LocalizedStringKey("settings_feedback"))
-                                .dynamicTypeSize(..<DynamicTypeSize.large)
-                        } icon: {
-                            Image(systemName: "message.fill")
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-                                .foregroundColor(.blue)
-                        }
-                    }
-                }
                 
                 Section(header: Text(LocalizedStringKey("settings_privacy_section"))) {
                     NavigationLink(destination: EmptyView()) {
