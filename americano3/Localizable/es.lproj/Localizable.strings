@@ -5,6 +5,9 @@
   Created by Francesco Romeo on 29/03/25.
   
 */
+<<<<<<< HEAD:americano3/americano3/Localizable/es.lproj/Localizable.strings
+<<<<<<< refs/remotes/origin/main
+=======
 "braille_alphabet" = "Alfabeto Braille";
 "translate" = "Traducir";
 "braille_alphabet" = "Alfabeto Braille";
@@ -61,17 +64,6 @@
 "settings_privacy_policy" = "Política de privacidad";
 "settings_close" = "Cerrar ajustes";
 "settings_button" = "Abrir Ajustes";
-
-"question_mark" = "signo de interrogación";
-"exclamation_mark" = "signo de exclamación";
-"period" = "punto";
-"comma" = "coma";
-"semicolon" = "punto y coma";
-"colon" = "dos puntos";
-"open_parenthesis" = "paréntesis abierto";
-"close_parenthesis" = "paréntesis cerrado";
-"quotation_mark" = "comillas";
-"apostrophe" = "apóstrofo";
-
-"text_label" = "Texto";
-"braille_label" = "Braille";
+>>>>>>> edits
+=======
+>>>>>>> 69acb2bd35cafd34df977b11f3382c7b3fac13e8:americano3/Localizable/es.lproj/Localizable.strings
