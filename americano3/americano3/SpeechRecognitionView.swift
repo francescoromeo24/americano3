@@ -28,7 +28,6 @@ struct SpeechRecognizerView: View {
         }) {
             ZStack {
                 Image(systemName: "microphone")
-                    .dynamicTypeSize(..<DynamicTypeSize.large)
                     .font(.system(size: 25))
                     .foregroundColor(.blue)
                     .padding()

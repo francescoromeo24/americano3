@@ -8,14 +8,12 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text(LocalizedStringKey("settings_app_permissions"))){
+                Section(header: Text(LocalizedStringKey("settings_app_permissions"))) {
                     NavigationLink(destination: EmptyView()) {
                         Label {
                             Text(LocalizedStringKey("settings_permissions"))
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                         } icon: {
                             Image(systemName: "lock.fill")
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                 .foregroundColor(.yellow)
                         }
                     }
@@ -30,10 +28,8 @@ struct SettingsView: View {
                     NavigationLink(destination: EmptyView()) {
                         Label {
                             Text(LocalizedStringKey("settings_feedback"))
-                                .dynamicTypeSize(..<DynamicTypeSize.large)
                         } icon: {
                             Image(systemName: "message.fill")
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                 .foregroundColor(.blue)
                         }
                     }
@@ -43,10 +39,8 @@ struct SettingsView: View {
                     NavigationLink(destination: EmptyView()) {
                         Label {
                             Text(LocalizedStringKey("settings_privacy_policy"))
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                         } icon: {
                             Image(systemName: "doc.fill")
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                 .foregroundColor(.gray)
                         }
                     }
@@ -68,11 +62,9 @@ struct SettingsView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                             .foregroundColor(.gray)
                     }
                     .accessibilityLabel(LocalizedStringKey("settings_close"))
-                    
                 }
             }
         }

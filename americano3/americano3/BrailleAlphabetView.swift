@@ -5,7 +5,6 @@
 //  Created by Francesco Romeo on 28/01/25.
 //
 import SwiftUI
-import AVFoundation
 
 struct BrailleAlphabetView: View {
     
@@ -156,7 +155,6 @@ struct BrailleAlphabetView: View {
 
     ]
     
-    
 
     // Function to filter and sort the alphabet based on the selected type
     func filteredAlphabet() -> [(label: String, pattern: [Bool])] {
@@ -200,13 +198,11 @@ struct BrailleAlphabetView: View {
                     Picker("Select Alphabet Type", selection: $selectedType) {
                         ForEach(AlphabetType.allCases, id: \.self) { type in
                             Text(type.localized)
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                 .font(.body)
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.6)
                                 .multilineTextAlignment(.center)
                         }
-                       
                     }
                     .pickerStyle(SegmentedPickerStyle())
                     .padding()
@@ -216,7 +212,6 @@ struct BrailleAlphabetView: View {
                         ForEach(filteredAlphabet(), id: \.label) { item in
                             VStack(spacing: 10) {
                                 Text(item.label)
-                                    .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                     .font(.title)
                                     .bold()
                                     .foregroundColor(.gray)
@@ -231,7 +226,7 @@ struct BrailleAlphabetView: View {
             }
             .background(Color("Background"))
             .navigationTitle(LocalizedStringKey("braille_alphabet"))
-            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+            .dynamicTypeSize(..<DynamicTypeSize.large)
             .foregroundColor(.blue)
         }
     }
@@ -239,47 +234,8 @@ struct BrailleAlphabetView: View {
 
 // View to display the Braille pattern for each character
 struct BraillePatternView: View {
-    let synthesizer = AVSpeechSynthesizer()
     let pattern: [Bool]
     let label: String
-    @State private var feedbackGenerator = UIImpactFeedbackGenerator(style: .light) // Changed to @State
-
-    private func speakLetter(_ letter: String) {
-        // Always trigger haptic feedback first
-        feedbackGenerator.prepare()
-        feedbackGenerator.impactOccurred()
-        
-        // Get device language
-        let deviceLanguage = Locale.current.language.languageCode?.identifier ?? "en"
-        let supportedLanguages = ["en", "it", "es", "fr", "de"]
-        let languageToUse = supportedLanguages.contains(deviceLanguage) ? deviceLanguage : "en"
-        
-        // Create a localized version of the character
-        let characterToSpeak: String
-        switch letter {
-        case "?": characterToSpeak = NSLocalizedString("question_mark", comment: "")
-        case "!": characterToSpeak = NSLocalizedString("exclamation_mark", comment: "")
-        case ".": characterToSpeak = NSLocalizedString("period", comment: "")
-        case ",": characterToSpeak = NSLocalizedString("comma", comment: "")
-        case ";": characterToSpeak = NSLocalizedString("semicolon", comment: "")
-        case ":": characterToSpeak = NSLocalizedString("colon", comment: "")
-        case "(": characterToSpeak = NSLocalizedString("open_parenthesis", comment: "")
-        case ")": characterToSpeak = NSLocalizedString("close_parenthesis", comment: "")
-        case "\"": characterToSpeak = NSLocalizedString("quotation_mark", comment: "")
-        case "'": characterToSpeak = NSLocalizedString("apostrophe", comment: "")
-        default: characterToSpeak = letter
-        }
-        
-        // Speak the character
-        let utterance = AVSpeechUtterance(string: characterToSpeak)
-        if let voice = AVSpeechSynthesisVoice(language: languageToUse) {
-            utterance.voice = voice
-        } else if let defaultVoice = AVSpeechSynthesisVoice(language: "en") {
-            utterance.voice = defaultVoice
-        }
-        utterance.rate = 0.5
-        synthesizer.speak(utterance)
-    }
 
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.fixed(15)), count: 2), spacing: 5) {
@@ -293,14 +249,17 @@ struct BraillePatternView: View {
         .frame(width: 50, height: 60)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(label)
-        .onTapGesture {
-            speakLetter(label)
+    }
+}
+
+// Updated preview
+struct BrailleAlphabetView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            BrailleAlphabetView()
+            BrailleAlphabetView()
+                .environment(\.sizeCategory, .accessibilityExtraExtraLarge)
         }
     }
 }
 
-        #Preview {
-            BrailleAlphabetView()
-        
-        }
-  

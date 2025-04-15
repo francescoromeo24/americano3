@@ -13,35 +13,11 @@ struct ContentView: View {
     @StateObject private var viewModel = ContentViewFunc()
     @Environment(\.colorScheme) var colorScheme
     @State private var showSettings = false
-   
-    
-    // Replace with this at the top of your ContentView struct:
-    @State private var synthesizer = AVSpeechSynthesizer()
+    let synthesizer = AVSpeechSynthesizer()
     @AppStorage("selectedLanguage") private var selectedLanguage = "en"
-    @State private var isBrailleKeyboardActive = false
     
     init() {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.systemBlue]
-    }
-    
-    private func speakTranslation() {
-        do {
-            let textToSpeak = viewModel.isTextToBraille ? viewModel.brailleOutput : viewModel.textInput
-            guard !textToSpeak.isEmpty else { return }
-            
-            let utterance = AVSpeechUtterance(string: textToSpeak)
-            if let voice = AVSpeechSynthesisVoice(language: selectedLanguage) {
-                utterance.voice = voice
-            }
-            utterance.rate = 0.5
-            synthesizer.speak(utterance)
-        } catch {
-            print("Speech synthesis error: \(error.localizedDescription)")
-        }
-    }
-    
-    private func activateBrailleKeyboard() {
-        viewModel.activateBrailleKeyboard()
     }
     
     var body: some View {
@@ -51,38 +27,19 @@ struct ContentView: View {
                     
                     // Text Input Section
                     VStack(alignment: .leading, spacing: 5) {
-                        HStack {
-                           
-                            Text(viewModel.isTextToBraille ? LocalizedStringKey("text_label") : LocalizedStringKey("braille_label"))
-
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-                                .font(.title)
-                                .fontWeight(.semibold)
-                                
-                            
-                            Spacer()
-                            
-                            // Add Braille Keyboard Button
-                            if !viewModel.isTextToBraille {
-                                Button(action: {
-                                    activateBrailleKeyboard()
-                                }) {
-                                    Image(systemName: "keyboard")
-                                        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-                                        .font(.system(size: 20))
-                                        .foregroundColor(.blue)
-                                        .padding()
-                                        .background(Circle().stroke(Color.blue, lineWidth: 2))
-                                    
-                                }
-                                .accessibilityLabel("Activate Braille Keyboard")
-                            }
-                        }
+                        Text(viewModel.isTextToBraille ? "Text" : "Braille")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .dynamicTypeSize(..<DynamicTypeSize.large)
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                            .padding([.top, .leading], 10.0)
+                        
+                        
                         
                         TextField(LocalizedStringKey(viewModel.placeholderText()), text: $viewModel.textInput, axis: .vertical)
-                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                             .padding()
                             .frame(minHeight: 80)
+                            .dynamicTypeSize(..<DynamicTypeSize.large)
                             .background(Color.white)
                             .cornerRadius(10)
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 2))
@@ -101,8 +58,8 @@ struct ContentView: View {
                             viewModel.swapTranslation()
                         }) {
                             Image(systemName: "arrow.trianglehead.swap")
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                 .font(.system(size: 20))
+                                .dynamicTypeSize(..<DynamicTypeSize.large)
                                 .foregroundColor(.blue)
                                 .padding()
                                 .background(Circle().stroke(Color.blue, lineWidth: 2))
@@ -116,8 +73,8 @@ struct ContentView: View {
                             viewModel.addFlashcard()
                         }) {
                             Image(systemName: "plus")
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                 .font(.system(size: 20))
+                                .dynamicTypeSize(..<DynamicTypeSize.large)
                                 .foregroundColor(.blue)
                                 .padding()
                                 .background(Circle().stroke(Color.blue, lineWidth: 2))
@@ -127,25 +84,25 @@ struct ContentView: View {
                     
                     // Braille Output Section
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(viewModel.isTextToBraille ? LocalizedStringKey("braille_label") : LocalizedStringKey("text_label"))
-                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+                        Text(viewModel.isTextToBraille ? "Braille" : "Text")
                             .font(.title)
                             .fontWeight(.semibold)
+                            .dynamicTypeSize(..<DynamicTypeSize.large)
                             .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                             .padding([.top, .leading], 10.0)
                         
                         // Display the translated Braille output
                         ScrollView(.vertical, showsIndicators: true) {
-                            
+    
                             
                             // Nella sezione Braille Output, modifica il TextField così:
                             TextField(LocalizedStringKey("translation"), text: $viewModel.brailleOutput, axis: .vertical)
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                 .font(.custom("Courier", size: 20))
                                 .padding()
                                 .frame(minHeight: 80)
                                 .background(Color.white)
                                 .cornerRadius(10)
+                                .dynamicTypeSize(..<DynamicTypeSize.large)
                                 .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 2))
                                 .foregroundColor(.gray)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -153,7 +110,7 @@ struct ContentView: View {
                                 .accessibilityLabel(viewModel.textInput.map { String($0) }.joined(separator: ", "))
                                 .accessibilityHint(LocalizedStringKey("swipe_to_hear"))
                                 .onTapGesture {
-                                    viewModel.speakTranslation(with: synthesizer, in: selectedLanguage)
+                                    speakTranslation()
                                 }
                         }
                         .padding(5)
@@ -167,7 +124,6 @@ struct ContentView: View {
                         
                         Spacer()
                             .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 60:20)
-                            
                         
                         // Open the camera to capture text
                         Button(action: {
@@ -175,7 +131,7 @@ struct ContentView: View {
                         }) {
                             Image(systemName: "camera")
                                 .font(.system(size: 25))
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+                                .dynamicTypeSize(..<DynamicTypeSize.large)
                                 .foregroundColor(.blue)
                                 .padding()
                                 .background(Circle().stroke(Color.blue, lineWidth: 2))
@@ -206,11 +162,10 @@ struct ContentView: View {
                     // History Section
                     HStack {
                         Text(LocalizedStringKey("history"))
-                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-                            .foregroundColor(.blue)
                             .font(.title)
+                            .dynamicTypeSize(..<DynamicTypeSize.large)
                             .fontWeight(.bold)
-    
+                            .foregroundStyle(.blue)
                         
                         Spacer()
                         
@@ -219,16 +174,15 @@ struct ContentView: View {
                             viewModel.showingFavorites.toggle()
                         }) {
                             Text(LocalizedStringKey("view_favorites"))
-                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                 .foregroundColor(.blue)
-                               
+                                .dynamicTypeSize(..<DynamicTypeSize.large)
                         }
                     }
                     .padding(.horizontal)
                     
                     // Flashcard Grid Display
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                        ForEach(viewModel.flashcardManager.sortedFlashcards) { flashcard in
+                        ForEach(viewModel.flashcardManager.flashcards) { flashcard in
                             NavigationLink(destination: FlashcardDetailView(flashcard: flashcard)) {
                                 FlashcardView(flashcard: .constant(flashcard)) { updatedFlashcard in
                                     viewModel.updateFlashcard(updatedFlashcard)
@@ -244,8 +198,6 @@ struct ContentView: View {
                             }
                         }
                     }
-                    
-                    
                     .foregroundStyle(.blue)
                     .padding()
                 }
@@ -256,17 +208,13 @@ struct ContentView: View {
             }
             .alert(LocalizedStringKey("delete_flashcard_title"), isPresented: $viewModel.showingDeleteConfirmation) {
                 Button(LocalizedStringKey("cancel"), role: .cancel) { viewModel.flashcardToDelete = nil }
-                    
                 Button(LocalizedStringKey("delete"), role: .destructive) {
                     viewModel.deleteFlashcard()
-                        
                 }
             } message: {
                 Text(LocalizedStringKey("delete_flashcard_message"))
-                  
             }
             .navigationTitle(LocalizedStringKey("translate"))
-            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -285,7 +233,6 @@ struct ContentView: View {
             .background(Color("Background"))
         }
     }
-    
 }
 
 
@@ -293,4 +240,16 @@ struct ContentView: View {
     ContentView()
 }
 
+// Aggiungi questa estensione alla fine del file, prima del Preview
+extension ContentView {
+    private func speakTranslation() {
+        let textToSpeak = viewModel.isTextToBraille ? viewModel.textInput : viewModel.brailleOutput
+        let utterance = AVSpeechUtterance(string: textToSpeak)
+        utterance.rate = 0.5
+        utterance.pitchMultiplier = 1.0
+        utterance.volume = 1.0
+        utterance.voice = AVSpeechSynthesisVoice(language: selectedLanguage)
+        synthesizer.speak(utterance)
+    }
+}
 

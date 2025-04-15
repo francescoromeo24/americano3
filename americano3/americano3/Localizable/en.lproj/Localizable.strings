@@ -5,6 +5,8 @@
   Created by Francesco Romeo on 29/03/25.
   
 */
+<<<<<<< refs/remotes/origin/main
+=======
 "braille_alphabet" = "Braille Alphabet";
 "translate" = "Translate";
 "lowercase" = "Lowercase";
@@ -55,17 +57,4 @@
 "settings_privacy_section" = "READ THE PRIVACY POLICY";
 "settings_privacy_policy" = "Privacy policy";
 "settings_close" = "Close settings";
-
-"question_mark" = "question mark";
-"exclamation_mark" = "exclamation mark";
-"period" = "period";
-"comma" = "comma";
-"semicolon" = "semicolon";
-"colon" = "colon";
-"open_parenthesis" = "open parenthesis";
-"close_parenthesis" = "close parenthesis";
-"quotation_mark" = "quotation mark";
-"apostrophe" = "apostrophe";
-
-"text_label" = "Text";
-"braille_label" = "Braille";
+>>>>>>> edits

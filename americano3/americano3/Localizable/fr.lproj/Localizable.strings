@@ -5,6 +5,8 @@
   Created by Francesco Romeo on 29/03/25.
   
 */
+<<<<<<< refs/remotes/origin/main
+=======
 "braille_alphabet" = "Alphabet Braille";
 "translate" = "Traduire";
 "braille_alphabet" = "Alphabet Braille";
@@ -61,17 +63,4 @@
 "settings_privacy_policy" = "Politique de confidentialité";
 "settings_close" = "Fermer les paramètres";
 "settings_button" = "Ouvrir les Paramètres";
-
-"question_mark" = "point d'interrogation";
-"exclamation_mark" = "point d'exclamation";
-"period" = "point";
-"comma" = "virgule";
-"semicolon" = "point-virgule";
-"colon" = "deux-points";
-"open_parenthesis" = "parenthèse ouvrante";
-"close_parenthesis" = "parenthèse fermante";
-"quotation_mark" = "guillemets";
-"apostrophe" = "apostrophe";
-
-"text_label" = "Texte";
-"braille_label" = "Braille";
+>>>>>>> edits

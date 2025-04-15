@@ -33,7 +33,6 @@ struct FavoritesView: View {
                                 VStack(alignment: .leading) {
                                     // Display word with accessibility support
                                     Text(flashcard.word.isEmpty ? "Word" : flashcard.word)
-                                        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                         .font(.headline)
                                         .fontWeight(.bold)
                                         .foregroundColor(.gray)
@@ -42,7 +41,6 @@ struct FavoritesView: View {
                                     
                                     // Display translation with accessibility support
                                     Text(flashcard.translation.isEmpty ? "Translation" : flashcard.translation)
-                                        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                         .font(.headline)
                                         .foregroundColor(.gray)
                                         .padding(.top, 2)
@@ -59,7 +57,6 @@ struct FavoritesView: View {
                                         triggerHapticFeedback() // Trigger haptic feedback on action
                                     }) {
                                         Image(systemName: "star.fill")
-                                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                                             .foregroundColor(.blue)
                                             .font(.title)
                                     }
@@ -87,8 +84,7 @@ struct FavoritesView: View {
                 }
                 .padding()
             }
-            .navigationTitle(LocalizedStringKey("favorites"))
-            .dynamicTypeSize(..<DynamicTypeSize.large)
+            .navigationTitle(LocalizedStringKey("favorites")) // Set navigation title
             .background(Color("Background")) // Use app-defined background color
         }
     }

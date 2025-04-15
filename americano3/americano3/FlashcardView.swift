@@ -17,17 +17,17 @@ struct FlashcardView: View {
             // Flashcard content (click to see details)
             VStack(alignment: .leading) {
                 Text(flashcard.word.isEmpty ? "Word" : flashcard.word)
-                    .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundColor(.gray)
+                    .dynamicTypeSize(..<DynamicTypeSize.large)
                     .accessibilityLabel(flashcard.word.isEmpty ? "Empty word field" : flashcard.word)
 
                 Text(flashcard.translation.isEmpty ? "Translation" : flashcard.translation)
-                    .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                     .font(.headline)
                     .foregroundColor(.black)
                     .padding(.top, 2)
+                    .dynamicTypeSize(..<DynamicTypeSize.large)
                     .accessibilityLabel(flashcard.translation.isEmpty ? "Empty translation field" : flashcard.translation)
             }
             .padding()
@@ -50,7 +50,7 @@ struct FlashcardView: View {
                     Image(systemName: flashcard.isStarred ? "star.fill" : "star")
                         .foregroundColor(.blue)
                         .font(.title)
-                        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+                        .dynamicTypeSize(..<DynamicTypeSize.large)
                         .accessibilityLabel(flashcard.isStarred ? "Remove from favorites" : "Add to favorites")
                         .accessibilityHint("Double tap to toggle favorite status")
                 }
