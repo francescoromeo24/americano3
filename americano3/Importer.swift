@@ -55,6 +55,7 @@ struct Importer: View {
             ImagePicker(selectedImage: $selectedImage, onImagePicked: handleImageImport)
         }
     }
+
     // Handles file import and reads text content
     private func handleFileImport(result: Result<[URL], Error>) {
         switch result {
@@ -76,12 +77,14 @@ struct Importer: View {
             UIAccessibility.post(notification: .announcement, argument: "Error importing file")
         }
     }
+
     // Handles image selection and processes text recognition
     private func handleImageImport(image: UIImage?) {
         guard let image = image else { return }
         recognizeText(from: image)
         UIAccessibility.post(notification: .announcement, argument: "Photo imported successfully")
     }
+
     // Uses Vision framework to recognize text in an image
     private func recognizeText(from image: UIImage) {
         guard let cgImage = image.cgImage else { return }
@@ -109,7 +112,7 @@ struct Importer: View {
     }
 }
 
-// ImagePicker View 
+// ImagePicker View
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage?
     var onImagePicked: (UIImage?) -> Void

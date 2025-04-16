@@ -5,3 +5,59 @@
   Created by Francesco Romeo on 29/03/25.
   
 */
+<<<<<<< HEAD:americano3/americano3/Localizable/en.lproj/Localizable.strings
+<<<<<<< refs/remotes/origin/main
+=======
+"braille_alphabet" = "Braille Alphabet";
+"translate" = "Translate";
+"lowercase" = "Lowercase";
+"uppercase" = "Uppercase";
+"numbers" = "Numbers";
+"specialchars" = "Special Characters";
+"text" = "Text";
+"braille" = "Braille";
+"enter_text_hint" = "Enter text here to translate";
+"translation" = "Translation";
+"swipe_to_hear" = "Swipe to hear letter by letter";
+"history" = "History";
+"view_favorites" = "View Favorites";
+"delete_flashcard_title" = "Delete Flashcard?";
+"cancel" = "Cancel";
+"delete" = "Delete";
+"delete_flashcard_message" = "Are you sure you want to delete this flashcard?";
+
+"double_tap_hint" = "Double tap to hear the word";
+"details" = "Details";
+"flashcard_details_hint" = "Flashcard details";
+
+"word_flashcard_hint" = "This is the word in the flashcard.";
+"translation_flashcard_hint" = "This is the translation of the word.";
+"toggle_star_hint" = "Tap to mark this flashcard as starred or unstarred.";
+"favorites" = "Favorites";
+
+"import_attach_files" = "Attach Files";
+"import_attach_photos" = "Attach Photos";
+"import_file_hint" = "Opens the file picker";
+"import_photo_hint" = "Opens the photo library";
+"import_options_label" = "Import options";
+"import_options_hint" = "Tap to choose between attaching a file or a photo";
+"import_success" = "File imported successfully";
+"import_failure" = "Failed to import file";
+"import_error" = "Error importing file";
+"photo_import_success" = "Photo imported successfully";
+"text_recognition_failure" = "Text recognition failed";
+"text_recognition_success" = "Text recognized successfully";
+"photo_selection_cancelled" = "Photo selection cancelled";
+"photo_selected_success" = "Photo selected successfully";
+
+"settings_title" = "Settings";
+"settings_app_permissions" = "SET APP PERMISSIONS";
+"settings_permissions" = "App permissions";
+"settings_feedback_section" = "PROVIDE YOUR FEEDBACK";
+"settings_feedback" = "Feedback";
+"settings_privacy_section" = "READ THE PRIVACY POLICY";
+"settings_privacy_policy" = "Privacy policy";
+"settings_close" = "Close settings";
+>>>>>>> edits
+=======
+>>>>>>> 69acb2bd35cafd34df977b11f3382c7b3fac13e8:americano3/Localizable/en.lproj/Localizable.strings

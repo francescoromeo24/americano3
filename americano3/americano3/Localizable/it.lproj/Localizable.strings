@@ -1,0 +1,140 @@
+/* 
+  Localizable.strings
+  americano3
+
+  Created by Francesco Romeo on 29/03/25.
+  
+*/
+"braille_alphabet" = "Alfabeto Braille";
+"translate" = "Traduci";
+"lowercase" = "Minuscole";
+"uppercase" = "Maiuscole";
+"numbers" = "Numeri";
+"specialchars" = "Caratteri Speciali";
+"text" = "Testo";
+"braille" = "Braille";
+"enter_text_hint" = "Inserisci il testo da tradurre";
+"translation" = "Traduzione";
+"swipe_to_hear" = "Scorri per ascoltare lettera per lettera";
+"history" = "Cronologia";
+"view_favorites" = "Visualizza Preferiti";
+"delete_flashcard_title" = "Eliminare la flashcard?";
+"cancel" = "Annulla";
+"delete" = "Elimina";
+"delete_flashcard_message" = "Sei sicuro di voler eliminare questa flashcard?";
+"braille_pattern_for" = "Pattern Braille per %@";
+"double_tap_to_hear_character" = "Tocca due volte per ascoltare il carattere";
+
+"switch_translation_label" = "Inverti traduzione";
+"switch_translation_hint" = "Passa da testo a Braille o viceversa.";
+"add_flashcard_label" = "Aggiungi scheda";
+"add_flashcard_hint" = "Tocca due volte per creare una nuova scheda";
+
+"double_tap_hint" = "Doppio tap per ascoltare la parola";
+"details" = "Dettagli";
+"flashcard_details_hint" = "Visualizza dettagli di questa scheda";
+"empty_word" = "Parola vuota";
+"word_label" = "Parola: %@";
+"word_flashcard_hint" = "La parola in questa scheda";
+"empty_translation" = "Traduzione vuota";
+"translation_label" = "Traduzione: %@";
+"translation_flashcard_hint" = "La traduzione in questa scheda";
+"star_flashcard" = "Aggiungi ai preferiti";
+"unstar_flashcard" = "Rimuovi dai preferiti";
+"star_button_hint" = "Tocca due volte per cambiare lo stato preferito";
+"flashcard_label" = "Scheda contenente parola: %@ e traduzione: %@";
+"toggle_star_hint" = "Tocca per aggiungere o rimuovere dai preferiti";
+"favorites" = "Preferiti";
+"original_word" = "Parola originale: %@";
+"original_word_hint" = "La parola originale in questa scheda";
+"braille_word" = "Rappresentazione Braille per %@";
+"braille_word_hint" = "Tocca due volte per ascoltare la pronuncia";
+"flashcard_details_label" = "Vista dettagli scheda";
+"added_to_favorites" = "Aggiunto ai preferiti";
+"removed_from_favorites" = "Rimosso dai preferiti";
+
+"camera_button" = "Apri fotocamera";
+"open_camera_hint" = "Scansiona testo da immagine per tradurlo.";
+"double_tap_to_capture" = "Tocca due volte per scattare foto del testo";
+
+"speech_button" = "Avvia riconoscimento vocale";
+"start_speech_recognition" = "Tocca per dettare un testo da tradurre.";
+
+"history_section_label" = "Storico traduzioni";
+"history_section_hint" = "Elenco delle traduzioni precedenti.";
+
+"import_attach_files" = "Allega File";
+"import_attach_photos" = "Allega Foto";
+"import_file_hint" = "Apre il selettore file";
+"import_photo_hint" = "Apre la libreria foto";
+"import_options_label" = "Opzioni importazione";
+"import_options_hint" = "Tocca per scegliere tra allegare un file o una foto";
+"import_success" = "File importato con successo";
+"import_failure" = "Importazione file fallita";
+"import_error" = "Errore durante l'importazione";
+"photo_import_success" = "Foto importata con successo";
+"text_recognition_failure" = "Riconoscimento testo fallito";
+"text_recognition_success" = "Testo riconosciuto con successo";
+"photo_selection_cancelled" = "Selezione foto annullata";
+"photo_selected_success" = "Foto selezionata con successo";
+
+"settings_title" = "Impostazioni";
+"settings_app_permissions" = "IMPOSTA PERMESSI APP";
+"settings_permissions" = "Permessi app";
+"settings_feedback_section" = "INVIA IL TUO FEEDBACK";
+"settings_feedback" = "Feedback";
+"settings_privacy_section" = "LEGGI LA PRIVACY POLICY";
+"settings_privacy_policy" = "Privacy policy";
+"settings_close" = "Chiudi impostazioni";
+"settings_button" = "Apri Impostazioni";
+"import_files_button" = "Importa file";
+"import_files_hint" = "Tocca due volte per selezionare un file di testo da importare";
+"import_photos_button" = "Importa foto";
+"import_photos_hint" = "Tocca due volte per selezionare una foto da importare";
+"import_menu_label" = "Menu importazione";
+"import_menu_hint" = "Tocca due volte per aprire le opzioni di importazione";
+"file_import_success" = "File importato con successo";
+"file_import_failure" = "Errore nella lettura del file";
+"file_import_error" = "Errore durante l'importazione del file";
+"photo_import_cancelled" = "Selezione foto annullata";
+
+"question_mark" = "punto interrogativo";
+"exclamation_mark" = "punto esclamativo";
+"period" = "punto";
+"comma" = "virgola";
+"semicolon" = "punto e virgola";
+"colon" = "due punti";
+"open_parenthesis" = "parentesi aperta";
+"close_parenthesis" = "parentesi chiusa";
+"quotation_mark" = "virgolette";
+"apostrophe" = "apostrofo";
+
+"text_label" = "Testo";
+"braille_label" = "Braille";
+
+"translate_tab" = "Scheda traduzione";
+"double_tap_to_switch_to_translate" = "Tocca due volte per passare alla vista traduzione";
+"braille_alphabet_tab" = "Scheda alfabeto Braille";
+"double_tap_to_switch_to_braille_alphabet" = "Tocca due volte per passare alla vista alfabeto Braille";
+
+"app_permissions_label" = "Permessi app";
+"app_permissions_hint" = "Tocca due volte per aprire le impostazioni di sistema";
+"feedback_label" = "Invia feedback";
+"feedback_hint" = "Tocca due volte per inviare feedback";
+"privacy_policy_label" = "Privacy policy";
+"privacy_policy_hint" = "Tocca due volte per visualizzare la privacy policy";
+"close_settings_hint" = "Tocca due volte per chiudere le impostazioni";
+
+"start_recording" = "Inizia registrazione";
+"stop_recording" = "Ferma registrazione";
+"recording_button_hint" = "Tocca due volte per avviare o fermare la registrazione vocale";
+
+"swap_button_label" = "Cambia modalità traduzione";
+"swap_button_hint" = "Tocca due volte per passare tra testo e Braille";
+
+"tap_to_hear_braille_translation" = "Tocca per ascoltare la traduzione in Braille";
+"tap_to_hear_text_translation" = "Tocca per ascoltare la traduzione in testo";
+"camera_button_label" = "Fotocamera";
+"camera_button_hint" = "Tocca due volte per aprire la fotocamera e riconoscere il testo";
+"tap_to_open_favorites_view" = "Tocca due volte per aprire la vista preferiti";
+"tap_to_open_settings_view" = "Tocca due volte per aprire le impostazioni";
